@@ -1,23 +1,31 @@
 import { motion } from 'framer-motion'
 import StatusBadge from './StatusBadge'
+import type { TopicRow } from '../types/topic'
 
-type Topic = {
-  id: string
-  topic: string
-  status: string
-  source: string
-  relevance_score?: number
-  keywords?: string[]
-  created_at: string
+function relativeTime(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const sec = Math.floor((now.getTime() - date.getTime()) / 1000)
+  if (sec < 60) return 'just now'
+  const min = Math.floor(sec / 60)
+  if (min < 60) return `${min}m ago`
+  const hr = Math.floor(min / 60)
+  if (hr < 24) return `${hr}h ago`
+  const d = Math.floor(hr / 24)
+  if (d < 7) return `${d}d ago`
+  return date.toLocaleDateString()
 }
 
 export default function TopicCard({
   topic,
   onClick,
 }: {
-  topic: Topic
+  topic: TopicRow
   onClick: () => void
 }) {
+  const score = topic.relevance_score != null ? Math.round(topic.relevance_score * 100) : null
+  const keywords = topic.keywords ?? []
+
   return (
     <motion.article
       layout
@@ -26,19 +34,40 @@ export default function TopicCard({
       onClick={onClick}
       className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-beagle-border rounded-beagle p-6 cursor-pointer hover:border-beagle-border-hover transition-colors"
     >
-      <p className="text-beagle-text-body line-clamp-2 mb-2">{topic.topic}</p>
-      <div className="flex flex-wrap items-center gap-2">
+      <p className="text-beagle-text-body line-clamp-2 mb-3">{topic.topic}</p>
+      <div className="flex flex-wrap items-center gap-2 mb-3">
         <StatusBadge status={topic.status} />
-        <span className="text-beagle-text-dimmed text-sm">{topic.source}</span>
-        {topic.relevance_score != null && (
-          <span className="text-beagle-text-muted text-sm">
-            {Math.round((topic.relevance_score ?? 0) * 100)}%
-          </span>
+        <span className="text-beagle-text-dimmed text-sm capitalize">{topic.source}</span>
+        {score != null && (
+          <div className="flex items-center gap-2">
+            <div className="w-12 h-1.5 bg-beagle-border rounded-full overflow-hidden">
+              <div
+                className="h-full bg-beagle-primary rounded-full"
+                style={{ width: `${score}%` }}
+              />
+            </div>
+            <span className="text-beagle-text-muted text-sm">{score}%</span>
+          </div>
         )}
-        <span className="text-beagle-text-faint text-sm">
-          {new Date(topic.created_at).toLocaleDateString()}
+        <span className="text-beagle-text-faint text-sm ml-auto">
+          {relativeTime(topic.created_at)}
         </span>
       </div>
+      {keywords.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {keywords.slice(0, 5).map((k) => (
+            <span
+              key={k}
+              className="px-2 py-0.5 rounded text-xs bg-beagle-border text-beagle-text-muted"
+            >
+              {k}
+            </span>
+          ))}
+          {keywords.length > 5 && (
+            <span className="text-beagle-text-faint text-xs">+{keywords.length - 5}</span>
+          )}
+        </div>
+      )}
     </motion.article>
   )
 }
