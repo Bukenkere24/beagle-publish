@@ -3,6 +3,8 @@ import { FileText, Linkedin, Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { publishAdapters, type Draft, type PublishAdapter } from '../lib/publishers'
 import type { TopicRow } from '../types/topic'
+import { useAuth } from '../hooks/useAuth'
+import RoleGuard from './RoleGuard'
 
 const ICON_MAP = { FileText, Linkedin } as const
 
@@ -21,6 +23,8 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
   const [rejectConfirm, setRejectConfirm] = useState(false)
   const [publishing, setPublishing] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const { canPublish, skipAuth, profile } = useAuth()
+  const publishBlockedReason = 'Requires admin approval'
 
   const draft: Draft = {
     id: topic.id,
@@ -104,34 +108,43 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
           (adapter.name === 'blog' && topic.status === 'published') ||
           (adapter.name === 'linkedin' && !!topic.linkedin_published_at)
 
+        const allowedByRole = skipAuth || profile?.role === 'admin'
+        const disabled = !canPublish || isPublished || !allowedByRole
+
         return (
           <div key={adapter.name} className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled={!canPublish || isPublished}
-              onClick={() => canPublish && !isPublished && setConfirmAdapter(adapter)}
-              className="inline-flex items-center gap-2 bg-beagle-primary text-white rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium hover:bg-beagle-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {publishing === adapter.name ? (
-                <Loader2 size={18} className="animate-spin" strokeWidth={1} />
-              ) : (
-                <Icon size={18} strokeWidth={1} />
-              )}
-              {isPublished ? 'Published ✓' : adapter.label}
-            </button>
+            <RoleGuard allowed={allowedByRole} reason={publishBlockedReason}>
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => !disabled && setConfirmAdapter(adapter)}
+                title={!allowedByRole ? publishBlockedReason : undefined}
+                className="inline-flex items-center gap-2 bg-beagle-primary text-white rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium hover:bg-beagle-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {publishing === adapter.name ? (
+                  <Loader2 size={18} className="animate-spin" strokeWidth={1} />
+                ) : (
+                  <Icon size={18} strokeWidth={1} />
+                )}
+                {isPublished ? 'Published ✓' : adapter.label}
+              </button>
+            </RoleGuard>
           </div>
         )
       })}
 
       {topic.status === 'review' && (
-        <button
-          type="button"
-          disabled={!!publishing}
-          onClick={() => setRejectConfirm(true)}
-          className="rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium border border-beagle-border text-beagle-text-muted hover:bg-beagle-primary-ghost hover:text-beagle-primary hover:border-beagle-primary transition-colors disabled:opacity-50"
-        >
-          {publishing === 'reject' ? <Loader2 size={18} className="animate-spin inline" strokeWidth={1} /> : 'Reject'}
-        </button>
+        <RoleGuard allowed={canPublish} reason={publishBlockedReason}>
+          <button
+            type="button"
+            disabled={!!publishing || !canPublish}
+            onClick={() => canPublish && setRejectConfirm(true)}
+            title={!canPublish ? publishBlockedReason : undefined}
+            className="rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium border border-beagle-border text-beagle-text-muted hover:bg-beagle-primary-ghost hover:text-beagle-primary hover:border-beagle-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {publishing === 'reject' ? <Loader2 size={18} className="animate-spin inline" strokeWidth={1} /> : 'Reject'}
+          </button>
+        </RoleGuard>
       )}
 
       {toast && (

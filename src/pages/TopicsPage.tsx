@@ -34,8 +34,8 @@ export default function TopicsPage() {
       if (activeFilter !== 'all') {
         query = query.eq('status', activeFilter)
       }
-      const { data, err } = await query
-      if (err) throw err
+      const { data, error } = await query
+      if (error) throw error
       setTopics((data as TopicRow[]) ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load topics')

@@ -7,6 +7,7 @@ import type { TopicRow } from '../types/topic'
 import DraftEditor from '../components/DraftEditor'
 import DraftMetadata from '../components/DraftMetadata'
 import PublishControls from '../components/PublishControls'
+import { CalendarClock } from 'lucide-react'
 
 export default function DraftEditorPage() {
   const { id } = useParams<{ id: string }>()
@@ -146,6 +147,44 @@ export default function DraftEditorPage() {
           <p className="text-beagle-text-dimmed text-xs max-w-sm">Review both blog and LinkedIn drafts before publishing. Once published, your post will be live on SynthPanel.</p>
         </div>
         <PublishControls topic={topic} onPublishSuccess={fetchTopic} />
+      </div>
+
+      <div className="mt-6 rounded-beagle border border-beagle-border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <CalendarClock size={18} strokeWidth={1} className="text-beagle-text-muted" />
+          <p className="text-beagle-text-muted text-sm uppercase tracking-widest font-semibold">Schedule</p>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <input
+            type="datetime-local"
+            value={
+              topic.scheduled_publish_at
+                ? new Date(topic.scheduled_publish_at).toISOString().slice(0, 16)
+                : ''
+            }
+            onChange={(e) => {
+              const v = e.target.value
+              if (!v) {
+                handleUpdate({ scheduled_publish_at: null })
+                return
+              }
+              const iso = new Date(v).toISOString()
+              handleUpdate({ scheduled_publish_at: iso })
+            }}
+            className="bg-beagle-surface border border-beagle-border rounded-beagle px-4 py-3 text-beagle-white placeholder-beagle-text-dimmed w-full sm:w-auto"
+          />
+          <button
+            type="button"
+            onClick={() => handleUpdate({ scheduled_publish_at: null })}
+            disabled={!topic.scheduled_publish_at}
+            className="rounded-beagle-btn px-4 py-3 uppercase tracking-wider font-medium border border-beagle-border text-beagle-text-muted hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+          >
+            Clear
+          </button>
+          <p className="text-beagle-text-faint text-xs sm:ml-auto">
+            Saves to `scheduled_publish_at`. Auto-publish cron (n8n/Edge Function) can pick this up.
+          </p>
+        </div>
       </div>
     </motion.section>
   )

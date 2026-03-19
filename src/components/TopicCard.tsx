@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import StatusBadge from './StatusBadge'
 import type { TopicRow } from '../types/topic'
+import { Clock } from 'lucide-react'
 
 function relativeTime(dateStr: string): string {
   const date = new Date(dateStr)
@@ -25,6 +26,10 @@ export default function TopicCard({
 }) {
   const score = topic.relevance_score != null ? Math.round(topic.relevance_score * 100) : null
   const keywords = topic.keywords ?? []
+  const scheduledAt =
+    topic.scheduled_publish_at && topic.status === 'review'
+      ? new Date(topic.scheduled_publish_at)
+      : null
 
   return (
     <motion.article
@@ -38,6 +43,12 @@ export default function TopicCard({
       <div className="flex flex-wrap items-center gap-2 mb-3">
         <StatusBadge status={topic.status} />
         <span className="text-beagle-text-dimmed text-sm capitalize">{topic.source}</span>
+        {scheduledAt && (
+          <span className="inline-flex items-center gap-1 rounded bg-white/5 border border-beagle-border px-2 py-1 text-xs text-beagle-text-muted">
+            <Clock size={14} strokeWidth={1} />
+            {scheduledAt.toLocaleString([], { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+          </span>
+        )}
         {score != null && (
           <div className="flex items-center gap-2">
             <div className="w-12 h-1.5 bg-beagle-border rounded-full overflow-hidden">
