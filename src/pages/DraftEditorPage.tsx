@@ -145,12 +145,7 @@ export default function DraftEditorPage() {
           <p className="text-beagle-text-muted text-sm uppercase tracking-widest font-semibold mb-2">Publishing</p>
           <p className="text-beagle-text-dimmed text-xs max-w-sm">Review both blog and LinkedIn drafts before publishing. Once published, your post will be live on SynthPanel.</p>
         </div>
-        <PublishControls 
-          topicId={topic.id} 
-          status={topic.status} 
-          draftContent={topic.draft_content || ''} 
-          linkedinDraft={topic.linkedin_draft || ''} 
-        />
+        <PublishControls topic={topic} onPublishSuccess={fetchTopic} />
       </div>
     </motion.section>
   )
