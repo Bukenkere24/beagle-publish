@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FileText, Linkedin, Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { AdminPublishButton } from './RoleGuard'
 import { publishAdapters, type Draft, type PublishAdapter } from '../lib/publishers'
 import type { TopicRow } from '../types/topic'
 
@@ -106,8 +107,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
 
         return (
           <div key={adapter.name} className="flex items-center gap-2">
-            <button
-              type="button"
+            <AdminPublishButton
               disabled={!canPublish || isPublished}
               onClick={() => canPublish && !isPublished && setConfirmAdapter(adapter)}
               className="inline-flex items-center gap-2 bg-beagle-primary text-white rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium hover:bg-beagle-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -118,20 +118,19 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
                 <Icon size={18} strokeWidth={1} />
               )}
               {isPublished ? 'Published ✓' : adapter.label}
-            </button>
+            </AdminPublishButton>
           </div>
         )
       })}
 
       {topic.status === 'review' && (
-        <button
-          type="button"
+        <AdminPublishButton
           disabled={!!publishing}
           onClick={() => setRejectConfirm(true)}
           className="rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium border border-beagle-border text-beagle-text-muted hover:bg-beagle-primary-ghost hover:text-beagle-primary hover:border-beagle-primary transition-colors disabled:opacity-50"
         >
           {publishing === 'reject' ? <Loader2 size={18} className="animate-spin inline" strokeWidth={1} /> : 'Reject'}
-        </button>
+        </AdminPublishButton>
       )}
 
       {toast && (
@@ -168,8 +167,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
               >
                 Cancel
               </button>
-              <button
-                type="button"
+              <AdminPublishButton
                 onClick={() => handlePublish(confirmAdapter)}
                 disabled={!!publishing}
                 className="rounded-beagle-btn px-6 py-3 bg-beagle-primary text-white font-medium hover:bg-beagle-primary-hover disabled:opacity-50 inline-flex items-center gap-2"
@@ -182,7 +180,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
                 ) : (
                   confirmAdapter.name === 'blog' ? 'Publish Now' : 'Copy & Open LinkedIn'
                 )}
-              </button>
+              </AdminPublishButton>
             </div>
           </div>
         </div>
@@ -208,14 +206,13 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
               >
                 Cancel
               </button>
-              <button
-                type="button"
+              <AdminPublishButton
                 onClick={handleReject}
                 disabled={!!publishing}
                 className="rounded-beagle-btn px-6 py-3 bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 disabled:opacity-50"
               >
                 {publishing === 'reject' ? <Loader2 size={16} className="animate-spin inline" strokeWidth={1} /> : 'Reject'}
-              </button>
+              </AdminPublishButton>
             </div>
           </div>
         </div>
