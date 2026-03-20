@@ -17,7 +17,7 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
   const [blogContent, setBlogContent] = useState(topic.draft_content || '')
   const [linkedinDraft, setLinkedinDraft] = useState(topic.linkedin_draft || '')
   const [isGenerating, setIsGenerating] = useState(false)
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setBlogContent(topic.draft_content || '')

@@ -54,8 +54,18 @@
 - [ ] After LinkedIn flow, `linkedin_published_at` is set and button shows "Published ✓"
 - [ ] No console errors on any page
 
+### Settings & roles (BP-407 — Shashank)
+- [ ] **Sign in / sign up** works (email); new users default to **editor** in `bcc_profiles` after DB migration
+- [ ] **Settings** shows email, display name, and **role** badge (`admin` | `editor`)
+- [ ] **Editors** cannot publish: **Publish to Blog**, **Post to LinkedIn**, **Reject**, and confirm modals show disabled controls with tooltip *Requires admin approval*
+- [ ] **Admins** can publish and reject as normal
+- [ ] Sidebar shows signed-in **email** and **Sign out**
+
+### Schedule (BP-408 — Shashank)
+- [ ] On a topic in **`review`**, **Schedule publish** saves `scheduled_publish_at` (and **Clear schedule** clears it)
+- [ ] Topics list shows **clock + scheduled time** for in-review topics that have a schedule
+
 ### Settings & polish
-- [ ] Settings page loads
 - [ ] Layout is readable on small viewport (responsive)
 
 ---

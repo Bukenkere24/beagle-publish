@@ -7,6 +7,7 @@ import type { TopicRow } from '../types/topic'
 import DraftEditor from '../components/DraftEditor'
 import DraftMetadata from '../components/DraftMetadata'
 import PublishControls from '../components/PublishControls'
+import SchedulePublish from '../components/SchedulePublish'
 
 export default function DraftEditorPage() {
   const { id } = useParams<{ id: string }>()
@@ -140,13 +141,16 @@ export default function DraftEditorPage() {
         onUpdate={handleUpdate} 
       />
 
-      <div className="mt-8 border-t border-beagle-border pt-8 flex justify-between items-center">
+      <div className="mt-8 border-t border-beagle-border pt-8 flex flex-col gap-6 lg:flex-row lg:justify-between lg:items-start">
         <div>
           <p className="text-beagle-text-muted text-sm uppercase tracking-widest font-semibold mb-2">Publishing</p>
-          <p className="text-beagle-text-dimmed text-xs max-w-sm">Review both blog and LinkedIn drafts before publishing. Once published, your post will be live on SynthPanel.</p>
+          <p className="text-beagle-text-dimmed text-xs max-w-sm">Review both blog and LinkedIn drafts before publishing. Once published, your post will be live on SynthPanel. Only admins can publish (BP-407).</p>
         </div>
         <PublishControls topic={topic} onPublishSuccess={fetchTopic} />
       </div>
+
+      {/* BP-408: spec — date picker below Publish Controls */}
+      <SchedulePublish topic={topic} onSaved={fetchTopic} />
     </motion.section>
   )
 }

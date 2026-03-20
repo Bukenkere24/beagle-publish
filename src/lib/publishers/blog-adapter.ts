@@ -1,5 +1,5 @@
 import { supabase } from '../supabase'
-import type { PublishAdapter, Draft, PublishResult } from './types'
+import type { PublishAdapter, PublishResult } from './types'
 
 export const blogAdapter: PublishAdapter = {
   name: 'blog',
