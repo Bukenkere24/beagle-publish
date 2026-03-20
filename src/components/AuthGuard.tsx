@@ -1,37 +1,26 @@
-import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<unknown>(null)
-  const [loading, setLoading] = useState(true)
   const location = useLocation()
-  const skipAuth = import.meta.env.VITE_DEV_SKIP_AUTH === 'true'
+  const { user, loading } = useAuth()
+  const skipAuth =
+    import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
+    import.meta.env.VITE_DEV_SKIP_AUTH === '1'
 
-  useEffect(() => {
-    if (skipAuth) {
-      setLoading(false)
-      return
-    }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-    return () => subscription.unsubscribe()
-  }, [skipAuth])
+  if (skipAuth) {
+    return <>{children}</>
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-beagle-bg">
+      <div className="flex min-h-screen items-center justify-center bg-beagle-bg">
         <p className="text-beagle-text-muted">Loading...</p>
       </div>
     )
   }
 
-  if (!skipAuth && !session) {
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
