@@ -2,10 +2,30 @@
 
 Content operations dashboard — topics from n8n, AI drafts, review & publish to blog + LinkedIn.
 
-## Avaneesh's tickets (BP-401, BP-402)
+## Tickets by owner
+
+### Avaneesh (BP-401, BP-402)
 
 - **BP-401** — Scaffold app (this repo): Vite + React + Tailwind + Supabase, routes, Layout, AuthGuard. ✅ Done.
 - **BP-402** — Topics Queue: list from `blog_topic_queue`, filter tabs, "Add Topic" button, click → `/drafts/:id`.
+
+### Samarth (BP-403, BP-404)
+
+- **BP-403** — Draft editor: blog + LinkedIn tabs, Markdown + preview, metadata, auto-save. ✅ Done.
+- **BP-404** — `generate-linkedin` Edge Function + client invoke. ✅ Done.
+
+### Arya (BP-405, BP-406)
+
+- **BP-405 / BP-406** — Publisher adapters (blog + LinkedIn copy/post), `PublishControls`. ✅ Done.
+
+### Shashank (BP-407, BP-408)
+
+- **BP-407** — Supabase email **sign-in / sign-up**, `bcc_profiles` (`admin` | `editor`), `AuthProvider` + `useAuth`, **Settings** (email, name, role), **Login** page, `AuthGuard` + `VITE_DEV_SKIP_AUTH`, **`AdminPublishButton`** on publish/reject/confirm (editors see *Requires admin approval*).
+- **BP-408** — **`scheduled_publish_at`** on draft page (`SchedulePublish`), clock + time on topic cards when in review; **auto-publish** is not in-app — use n8n (or cron) per `docs/BP-408-scheduled-publish.md`.
+
+**Supabase:** run `supabase/migrations/20260320140000_bcc_profiles.sql` in the SQL Editor after approval in `#dev-general`, then promote an admin:
+
+`UPDATE public.bcc_profiles SET role = 'admin' WHERE email = 'your@email.com';`
 
 ## Quick start
 
