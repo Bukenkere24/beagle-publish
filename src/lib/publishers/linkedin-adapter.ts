@@ -9,13 +9,13 @@ export const linkedinCopyAdapter: PublishAdapter = {
   name: 'linkedin',
   label: 'Post to LinkedIn',
   icon: 'Linkedin',
-  canPublish: (draft) => !!draft.linkedin_draft,
+  canPublish: (draft) => !!draft.draft_content,
   publish: async (draft): Promise<PublishResult> => {
     try {
-      if (!draft.linkedin_draft) {
-        return { success: false, error: 'No LinkedIn draft' }
+      if (!draft.draft_content) {
+        return { success: false, error: 'No blog content available' }
       }
-      await navigator.clipboard.writeText(draft.linkedin_draft)
+      await navigator.clipboard.writeText(draft.draft_content)
       window.open('https://www.linkedin.com/company/beagle-ai-solutions/admin/', '_blank')
       await supabase
         .from('blog_topic_queue')

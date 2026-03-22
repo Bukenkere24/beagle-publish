@@ -1,0 +1,252 @@
+{
+  "name": "LinkedIn Publishing Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "fa8cf442-df9c-49f4-b981-73cca4bdf9cd",
+      "name": "When Publish Button Clicked",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.use_linkedin_api }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              },
+              "rightValue": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0654592f-21f4-41e2-b52c-8b0bf17cb760",
+      "name": "Check OAuth Available",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "communityManagement",
+        "postAs": "organization",
+        "organization": "<__PLACEHOLDER_VALUE__LinkedIn Organization URN (e.g., urn:li:organization:12345678)__>",
+        "text": "={{ $json.linkedin_draft }}",
+        "additionalFields": {}
+      },
+      "id": "80df309a-7d3a-487a-bb64-1e8064522281",
+      "name": "Post to LinkedIn API",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        688,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "blog_topic_queue",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $(\"When Publish Button Clicked\").item.json.draft_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "linkedin_published_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            },
+            {
+              "fieldId": "linkedin_post_url",
+              "fieldValue": "={{ $json.urn }}"
+            },
+            {
+              "fieldId": "publish_method",
+              "fieldValue": "api"
+            }
+          ]
+        }
+      },
+      "id": "86af3b89-6f58-448a-befa-58851ab84d6f",
+      "name": "Update Supabase (API)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        912,
+        208
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "rAL0ZDN06qTBHXeC",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "clipboard_text",
+              "value": "={{ $json.linkedin_draft }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "admin_url",
+              "value": "https://www.linkedin.com/company/beagle-ai-solutions/admin/",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "toast_message",
+              "value": "Draft copied! Paste it in LinkedIn → click Post",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "8292a046-af83-4ff9-8735-b2ab2a642f28",
+      "name": "Prepare Copy & Post",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "blog_topic_queue",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $(\"When Publish Button Clicked\").item.json.draft_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "linkedin_published_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            },
+            {
+              "fieldId": "linkedin_post_url",
+              "fieldValue": "={{ $(\"When Publish Button Clicked\").item.json.company_page_url }}"
+            },
+            {
+              "fieldId": "publish_method",
+              "fieldValue": "copy"
+            }
+          ]
+        }
+      },
+      "id": "482e5c7f-7f0f-4ff9-b985-0aeebb990f12",
+      "name": "Update Supabase (Copy)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        912,
+        400
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "rAL0ZDN06qTBHXeC",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Publish Button Clicked": {
+      "main": [
+        [
+          {
+            "node": "Check OAuth Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check OAuth Available": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Copy & Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn API": {
+      "main": [
+        [
+          {
+            "node": "Update Supabase (API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Copy & Post": {
+      "main": [
+        [
+          {
+            "node": "Update Supabase (Copy)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a04a8595-9e1d-4035-86e2-13d0f9691593",
+  "meta": {
+    "instanceId": "0ac0ab77ae32be523952d1d5d264fba69747951518a3a18080225f43542e413a"
+  },
+  "id": "FLio8DwLXYiP3CSq",
+  "tags": []
+}

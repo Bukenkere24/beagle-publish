@@ -125,7 +125,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null)
   }, [])
 
-  const isAdmin = useMemo(() => profile?.role === 'admin', [profile?.role])
+  const isAdmin = useMemo(() => {
+    const skipAuth =
+      import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
+      import.meta.env.VITE_DEV_SKIP_AUTH === '1'
+    return skipAuth || profile?.role === 'admin'
+  }, [profile?.role])
 
   const value = useMemo(
     () => ({

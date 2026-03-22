@@ -20,7 +20,7 @@ export const blogAdapter: PublishAdapter = {
 
       if (error) return { success: false, error: error.message }
       const url = draft.slug
-        ? `https://synthpanel.com/blog/${draft.slug}`
+        ? `https://synthpanel-mupn.vercel.app/blog/${draft.slug}`
         : undefined
       return { success: true, url }
     } catch (err) {

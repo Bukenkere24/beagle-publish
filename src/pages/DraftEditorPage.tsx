@@ -57,7 +57,7 @@ export default function DraftEditorPage() {
       if (error) throw error
       setLastSaved(new Date())
     } catch (err) {
-      console.error('Save failed:', err)
+      console.error('Save failed:', err instanceof Error ? err.message : JSON.stringify(err, null, 2))
       // Potentially revert state or show error toast
     } finally {
       setSaving(false)
