@@ -53,7 +53,7 @@ export default function DraftMetadata({ topic, onUpdate }: DraftMetadataProps) {
             URL Slug
           </label>
           <div className="flex items-center gap-2 text-beagle-text-dimmed bg-beagle-surface border border-beagle-border rounded-beagle px-3 py-2">
-            <span className="text-beagle-text-faint select-none">synthpanel.com/blog/</span>
+            <span className="text-beagle-text-faint select-none">synthpanel-mupn.vercel.app/blog/</span>
             <input
               type="text"
               value={slug}

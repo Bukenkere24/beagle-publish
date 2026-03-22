@@ -78,7 +78,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
   }
 
   const isBlogPublished = topic.status === 'published'
-  const blogUrl = topic.slug ? `https://synthpanel.com/blog/${topic.slug}` : null
+  const blogUrl = topic.slug ? `https://synthpanel-mupn.vercel.app/blog/${topic.slug}` : null
 
   return (
     <div className="flex flex-wrap gap-4 rounded-beagle border border-beagle-border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6">
@@ -123,6 +123,31 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
         )
       })}
 
+      {topic.status === 'queued' && (
+        <button
+          type="button"
+          disabled={!!publishing || !topic.draft_content}
+          onClick={async () => {
+            setPublishing('review')
+            try {
+              const { error } = await supabase
+                .from('blog_topic_queue')
+                .update({ status: 'review' })
+                .eq('id', topic.id)
+              if (error) throw error
+              onPublishSuccess()
+            } catch (err) {
+              showToast(err instanceof Error ? err.message : 'Failed to send to review')
+            } finally {
+              setPublishing(null)
+            }
+          }}
+          className="rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium bg-beagle-primary/10 text-beagle-primary hover:bg-beagle-primary/20 transition-colors disabled:opacity-50"
+        >
+          {publishing === 'review' ? <Loader2 size={18} className="animate-spin inline" strokeWidth={1} /> : 'Send to Review'}
+        </button>
+      )}
+
       {topic.status === 'review' && (
         <AdminPublishButton
           disabled={!!publishing}
@@ -156,7 +181,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
               <p><span className="text-beagle-text-muted">Title:</span> {topic.draft_title || 'Untitled'}</p>
               <p><span className="text-beagle-text-muted">Word count:</span> {getWordCount(confirmAdapter.name === 'blog' ? topic.draft_content : topic.linkedin_draft)}</p>
               {confirmAdapter.name === 'blog' && topic.slug && (
-                <p><span className="text-beagle-text-muted">URL:</span> https://synthpanel.com/blog/{topic.slug}</p>
+                <p><span className="text-beagle-text-muted">URL:</span> https://synthpanel-mupn.vercel.app/blog/{topic.slug}</p>
               )}
             </div>
             <div className="flex gap-3 justify-end">

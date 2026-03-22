@@ -6,26 +6,29 @@ import DraftEditorPage from './pages/DraftEditorPage'
 import SettingsPage from './pages/SettingsPage'
 import LoginPage from './pages/LoginPage'
 
+import LandingPage from './pages/LandingPage'
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        
         <Route
-          path="/"
           element={
             <AuthGuard>
               <Layout />
             </AuthGuard>
           }
         >
-          <Route index element={<Navigate to="/topics" replace />} />
           <Route path="topics" element={<TopicsPage />} />
           <Route path="drafts/:id" element={<DraftEditorPage />} />
           <Route path="drafts" element={<Navigate to="/topics" replace />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/topics" replace />} />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

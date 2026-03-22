@@ -12,8 +12,7 @@ export function RoleGuard({
 }: {
   children: (props: RoleGuardRenderProps) => ReactNode
 }) {
-  const { profile, loading } = useAuth()
-  const isAdmin = profile?.role === 'admin'
+  const { isAdmin, loading } = useAuth()
   return <>{children({ isAdmin, isLoading: loading })}</>
 }
 
@@ -31,8 +30,7 @@ export function AdminPublishButton({
   className = '',
   ...rest
 }: AdminPublishButtonProps) {
-  const { profile, loading } = useAuth()
-  const isAdmin = profile?.role === 'admin'
+  const { isAdmin, loading } = useAuth()
   const blocked = loading || !isAdmin
   const needsApproval = !loading && !isAdmin
 
