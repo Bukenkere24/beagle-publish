@@ -1,10 +1,52 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Lato:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Lato:wght@300;400;700;900&display=swap');
+
+:root {
+  --beagle-bg: #FFFFFF;
+  --beagle-surface: #F4F4F5;
+  --beagle-primary: #4552FF;
+  --beagle-primary-hover: #3442DD;
+  --beagle-primary-light: #E8EFFF;
+  --beagle-text-heading: #09090B;
+  --beagle-text-body: #3F3F46;
+  --beagle-text-muted: #71717A;
+  --beagle-border: #E4E7EB;
+  --beagle-border-hover: rgba(69, 82, 255, 0.3);
+  --beagle-success: #22C55E;
+  --beagle-warning: #F59E0B;
+  --beagle-error: #EF4444;
+}
+
+.dark {
+  --beagle-bg: #050505;
+  --beagle-surface: #0A0A0A;
+  --beagle-primary: #4552FF;
+  --beagle-primary-hover: #5B6CFF;
+  --beagle-primary-light: #7B8FFF;
+  --beagle-text-heading: #FFFFFF;
+  --beagle-text-body: rgba(236, 236, 236, 0.75);
+  --beagle-text-muted: #71717A;
+  --beagle-border: #252525;
+  --beagle-border-hover: rgba(69, 82, 255, 0.4);
+}
 
 html, body {
-  background-color: #050505;
-  color: rgba(236, 236, 236, 0.75);
-  font-family: "Space Grotesk", Lato, Poppins, Rubik, system-ui, sans-serif;
+  background-color: var(--beagle-bg);
+  color: var(--beagle-text-body);
+  font-family: "Inter", system-ui, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: rgba(69, 82, 255, 0.2);
+}
+
+/* Glass card pattern */
+.beagle-glass {
+  @apply backdrop-blur-sm;
+}
+.dark .beagle-glass {
+  @apply bg-gradient-to-b from-white/[0.04] to-white/[0.01];
 }

@@ -8,10 +8,12 @@ import DraftEditor from '../components/DraftEditor'
 import DraftMetadata from '../components/DraftMetadata'
 import PublishControls from '../components/PublishControls'
 import SchedulePublish from '../components/SchedulePublish'
+import { useAuth } from '../hooks/useAuth'
 
 export default function DraftEditorPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { user, profile } = useAuth()
   const [topic, setTopic] = useState<TopicRow | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +21,7 @@ export default function DraftEditorPage() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
   const fetchTopic = useCallback(async () => {
-    if (!id) return
+    if (!id || !user) return
     setLoading(true)
     try {
       const { data, error } = await supabase
@@ -29,13 +31,21 @@ export default function DraftEditorPage() {
         .single()
       
       if (error) throw error
-      setTopic(data as TopicRow)
+      const topicData = data as TopicRow
+      
+      // Ownership check (BP-503)
+      if (topicData.user_id && topicData.user_id !== user.id && profile?.role !== 'admin') {
+        navigate('/topics', { replace: true })
+        return
+      }
+
+      setTopic(topicData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load topic')
     } finally {
       setLoading(false)
     }
-  }, [id])
+  }, [id, user, profile, navigate])
 
   useEffect(() => {
     fetchTopic()

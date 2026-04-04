@@ -35,13 +35,13 @@ Content operations dashboard — topics from n8n, AI drafts, review & publish to
 
 ## Repo
 
-The doc says: create repo under **beagle-ai-solutions** org on GitHub. If it doesn’t exist yet, init and push when it’s created:
+The doc says: create repo under **Beagle-AI-automation** org on GitHub. If it doesn’t exist yet, init and push when it’s created:
 
 ```bash
 git init
 git add .
 git commit -m "feat(BP-401): scaffold Blog Command Center app"
-git remote add origin https://github.com/beagle-ai-solutions/beagle-publish.git
+git remote add origin https://github.com/Beagle-AI-automation/beagle-publish.git
 git push -u origin main
 ```
 

@@ -1,8 +1,8 @@
 import { supabase } from './supabase'
 
-export async function generateLinkedInDraft(blogContent: string, title: string): Promise<string> {
+export async function generateLinkedInDraft(blogContent: string, title: string, tone?: string): Promise<string> {
   const { data, error } = await supabase.functions.invoke('generate-linkedin', {
-    body: { blogContent, title }
+    body: { blogContent, title, tone }
   })
   
   if (error) {

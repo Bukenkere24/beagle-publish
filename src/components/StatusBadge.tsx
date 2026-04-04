@@ -1,10 +1,10 @@
 const statusStyles: Record<string, string> = {
-  queued: 'bg-zinc-800 text-beagle-text-muted',
-  drafting: 'bg-zinc-800 text-beagle-text-muted',
-  review: 'bg-yellow-500/20 text-yellow-400',
-  published: 'bg-green-500/20 text-green-400',
-  rejected: 'bg-red-500/20 text-red-400',
-  archived: 'bg-beagle-border text-beagle-text-dimmed',
+  queued: 'bg-beagle-surface text-beagle-text-muted border border-beagle-border',
+  drafting: 'bg-beagle-surface text-beagle-text-muted border border-beagle-border',
+  review: 'bg-beagle-warning/10 text-beagle-warning border border-beagle-warning/30',
+  published: 'bg-beagle-success/10 text-beagle-success border border-beagle-success/30',
+  rejected: 'bg-beagle-error/10 text-beagle-error border border-beagle-error/30',
+  archived: 'bg-beagle-border text-beagle-text-muted',
 }
 
 const statusLabels: Record<string, string> = {
@@ -16,12 +16,12 @@ const statusLabels: Record<string, string> = {
   archived: 'Archived',
 }
 
-export default function StatusBadge({ status }: { status: string }) {
+export default function StatusBadge({ status, className = '' }: { status: string; className?: string }) {
   const style = statusStyles[status] ?? statusStyles.queued
   const label = statusLabels[status] ?? status
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium ${style}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${style} ${className}`}
     >
       {label}
     </span>

@@ -23,6 +23,7 @@ type AuthContextValue = {
     password: string,
     fullName?: string,
   ) => Promise<{ error: Error | null }>
+  signInWithGoogle: () => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
 }
@@ -132,6 +133,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return skipAuth || profile?.role === 'admin'
   }, [profile?.role])
 
+  const signInWithGoogle = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    return { error: error as Error | null }
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -141,6 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin,
       signIn,
       signUp,
+      signInWithGoogle,
       signOut,
       refreshProfile,
     }),
@@ -152,6 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin,
       signIn,
       signUp,
+      signInWithGoogle,
       signOut,
       refreshProfile,
     ],

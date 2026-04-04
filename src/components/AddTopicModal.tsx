@@ -39,6 +39,7 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
         status: 'queued',
         keywords: keywordsArray.length ? keywordsArray : null,
         created_by: user?.email ?? null,
+        user_id: user?.id ?? null,
       })
       if (insertError) throw insertError
       setTopic('')
@@ -72,7 +73,7 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg rounded-beagle border border-beagle-border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6 shadow-xl"
+            className="w-full max-w-lg rounded-beagle border border-beagle-border beagle-glass p-8 shadow-2xl shadow-black/40"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-beagle-text-heading font-heading font-semibold text-xl">
@@ -139,17 +140,17 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-beagle-primary text-white rounded-beagle-btn px-6 py-4 uppercase tracking-wider font-medium hover:bg-beagle-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-beagle-primary text-white rounded-full px-6 py-3.5 font-bold hover:bg-beagle-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-beagle-primary/20 transition-all duration-300"
                 >
-                  {submitting ? 'Adding…' : 'Add Topic'}
+                  {submitting ? 'Adding Topic...' : 'Create Topic'}
                 </button>
                 <button
                   type="button"
                   onClick={handleClose}
                   disabled={submitting}
-                  className="px-6 py-4 rounded-beagle-btn border border-beagle-border text-beagle-text-body hover:bg-beagle-border transition-colors disabled:opacity-50"
+                  className="px-6 py-3.5 rounded-full border border-beagle-border text-beagle-text-muted hover:text-beagle-text-heading hover:bg-beagle-surface transition-all duration-300 font-bold"
                 >
-                  Cancel
+                  Discard
                 </button>
               </div>
             </form>

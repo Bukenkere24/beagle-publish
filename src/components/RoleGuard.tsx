@@ -1,50 +1,31 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { Loader2 } from 'lucide-react'
 
-type RoleGuardRenderProps = {
-  isAdmin: boolean
-  isLoading: boolean
-}
-
-/** Render-prop: custom UI for editors vs admins (BP-407). */
-export function RoleGuard({
-  children,
-}: {
-  children: (props: RoleGuardRenderProps) => ReactNode
-}) {
-  const { isAdmin, loading } = useAuth()
-  return <>{children({ isAdmin, isLoading: loading })}</>
-}
-
-type AdminPublishButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+interface RoleGuardProps {
   children: ReactNode
+  allowedRoles: ('admin' | 'editor')[]
 }
 
-/**
- * Publish / reject / destructive actions: disabled for editors with tooltip.
- */
-export function AdminPublishButton({
-  children,
-  disabled,
-  title,
-  className = '',
-  ...rest
-}: AdminPublishButtonProps) {
-  const { isAdmin, loading } = useAuth()
-  const blocked = loading || !isAdmin
-  const needsApproval = !loading && !isAdmin
+export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
+  const { profile, loading, isAdmin } = useAuth()
 
-  return (
-    <button
-      type="button"
-      {...rest}
-      disabled={disabled || blocked}
-      title={
-        needsApproval ? 'Requires admin approval' : title
-      }
-      className={className}
-    >
-      {children}
-    </button>
-  )
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-beagle-text-muted">
+        <Loader2 className="animate-spin mb-4" size={32} />
+        <p>Checking permissions...</p>
+      </div>
+    )
+  }
+
+  // Admin bypass
+  if (isAdmin) return <>{children}</>
+
+  if (!profile || !allowedRoles.includes(profile.role)) {
+    return <Navigate to="/topics" replace />
+  }
+
+  return <>{children}</>
 }

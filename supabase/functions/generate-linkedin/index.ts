@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { blogContent, title } = await req.json()
+    const { blogContent, title, tone } = await req.json()
     const apiKey = Deno.env.get('GEMINI_API_KEY')
 
     if (!apiKey) {
@@ -21,12 +21,12 @@ serve(async (req) => {
 
     const prompt = `You are a LinkedIn content writer for Beagle AI Solutions. 
 Convert this blog post into a LinkedIn post. 
+Write in a ${tone || 'professional'} tone.
 Title: ${title}
 Content: ${blogContent}
 
 Requirements:
 - Keep it 300-500 words.
-- Use a professional but conversational tone.
 - Start with a compelling hook.
 - Include 3-5 relevant hashtags at the end.
 - Use line breaks for readability.

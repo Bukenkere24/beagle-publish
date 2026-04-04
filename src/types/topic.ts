@@ -20,4 +20,5 @@ export interface TopicRow {
   destination: string[] | null
   created_by: string | null
   approved_by: string | null
+  user_id: string | null
 }

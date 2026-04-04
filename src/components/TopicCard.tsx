@@ -34,48 +34,51 @@ export default function TopicCard({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       onClick={onClick}
-      className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-beagle-border rounded-beagle p-6 cursor-pointer hover:border-beagle-border-hover transition-colors"
+      className="beagle-glass border border-beagle-border rounded-beagle p-6 cursor-pointer hover:border-beagle-border-hover hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
     >
-      <p className="text-beagle-text-body line-clamp-2 mb-3">{topic.topic}</p>
-      <div className="flex flex-wrap items-center gap-2 mb-3">
+      <p className="text-beagle-text-heading font-heading text-lg line-clamp-2 mb-3 leading-snug">{topic.topic}</p>
+      <div className="flex flex-wrap items-center gap-3 mb-4">
         <StatusBadge status={topic.status} />
-        <span className="text-beagle-text-dimmed text-sm capitalize">{topic.source}</span>
+        <span className="text-beagle-text-muted text-xs font-medium uppercase tracking-wider">{topic.source}</span>
         {topic.scheduled_publish_at && topic.status === 'review' && (
-          <span className="inline-flex items-center gap-1 text-beagle-text-muted text-xs">
-            <Clock size={12} strokeWidth={1} aria-hidden />
+          <span className="inline-flex items-center gap-1.5 text-beagle-warning text-xs font-medium px-2 py-0.5 rounded-full bg-beagle-warning/10 border border-beagle-warning/20">
+            <Clock size={12} strokeWidth={2} aria-hidden />
             {formatScheduledAt(topic.scheduled_publish_at)}
           </span>
         )}
         {score != null && (
-          <div className="flex items-center gap-2">
-            <div className="w-12 h-1.5 bg-beagle-border rounded-full overflow-hidden">
+          <div className="flex items-center gap-2 ml-auto">
+            <div className="w-16 h-1.5 bg-beagle-border rounded-full overflow-hidden">
               <div
-                className="h-full bg-beagle-primary rounded-full"
+                className="h-full bg-beagle-primary rounded-full transition-all duration-500"
                 style={{ width: `${score}%` }}
               />
             </div>
-            <span className="text-beagle-text-muted text-sm">{score}%</span>
+            <span className="text-beagle-text-muted text-xs font-medium">{score}%</span>
           </div>
         )}
-        <span className="text-beagle-text-faint text-sm ml-auto">
+      </div>
+      
+      <div className="flex items-center justify-between border-t border-beagle-border pt-4">
+        {keywords.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {keywords.slice(0, 3).map((k) => (
+              <span
+                key={k}
+                className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-beagle-surface text-beagle-text-muted border border-beagle-border"
+              >
+                {k}
+              </span>
+            ))}
+            {keywords.length > 3 && (
+              <span className="text-beagle-text-muted text-[10px] font-medium">+{keywords.length - 3} more</span>
+            )}
+          </div>
+        ) : <div />}
+        <span className="text-beagle-text-muted text-xs font-medium">
           {relativeTime(topic.created_at)}
         </span>
       </div>
-      {keywords.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {keywords.slice(0, 5).map((k) => (
-            <span
-              key={k}
-              className="px-2 py-0.5 rounded text-xs bg-beagle-border text-beagle-text-muted"
-            >
-              {k}
-            </span>
-          ))}
-          {keywords.length > 5 && (
-            <span className="text-beagle-text-faint text-xs">+{keywords.length - 5}</span>
-          )}
-        </div>
-      )}
     </motion.article>
   )
 }
