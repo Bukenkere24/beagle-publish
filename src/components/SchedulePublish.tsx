@@ -15,6 +15,7 @@ export default function SchedulePublish({ topic, onSaved }: Props) {
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  /* eslint-disable react-hooks/set-state-in-effect -- mirror server scheduled time into datetime-local */
   useEffect(() => {
     const initial = topic.scheduled_publish_at
     if (!initial) {
@@ -27,6 +28,7 @@ export default function SchedulePublish({ topic, onSaved }: Props) {
       `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`,
     )
   }, [topic.scheduled_publish_at])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   async function persist(iso: string | null) {
     setSaving(true)

@@ -5,8 +5,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const { user, loading } = useAuth()
   const skipAuth =
-    import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
-    import.meta.env.VITE_DEV_SKIP_AUTH === '1'
+    import.meta.env.DEV &&
+    (import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
+      import.meta.env.VITE_DEV_SKIP_AUTH === '1')
 
   if (skipAuth) {
     return <>{children}</>

@@ -1,9 +1,9 @@
 import { Link, Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutList, FileEdit, Settings, LogOut } from 'lucide-react'
+import { LayoutList, FileEdit, Settings, LogOut, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
 export default function Layout() {
-  const { user, signOut } = useAuth()
+  const { user, profile, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const draftsActive = location.pathname.startsWith('/drafts')
@@ -47,9 +47,23 @@ export default function Layout() {
           </NavLink>
         </nav>
         <div className="border-t border-beagle-border p-4 text-sm text-beagle-text-dimmed">
-          <p className="truncate" title={user?.email ?? ''}>
-            {user?.email ?? 'Signed in'}
-          </p>
+          <div className="mb-2 flex items-center gap-3">
+            {profile?.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt=""
+                className="h-10 w-10 shrink-0 rounded-full border border-beagle-border object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-beagle-border bg-beagle-bg text-beagle-text-muted">
+                <User size={20} strokeWidth={1.5} aria-hidden />
+              </span>
+            )}
+            <p className="min-w-0 flex-1 truncate" title={user?.email ?? ''}>
+              {profile?.full_name || user?.email || 'Signed in'}
+            </p>
+          </div>
           <button
             type="button"
             onClick={() => void handleSignOut()}

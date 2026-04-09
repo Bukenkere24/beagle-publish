@@ -9,6 +9,7 @@ import {
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { applyDocumentTheme } from '../lib/theme'
 import type { Profile } from '../types/profile'
 
 type AuthContextValue = {
@@ -18,6 +19,7 @@ type AuthContextValue = {
   loading: boolean
   isAdmin: boolean
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signInWithGoogle: () => Promise<{ error: Error | null }>
   signUp: (
     email: string,
     password: string,
@@ -74,6 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s)
       setUser(s?.user ?? null)
+      if (!s?.user) {
+        setProfile(null)
+        setLoading(false)
+      }
     })
 
     return () => {
@@ -82,9 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  /* eslint-disable react-hooks/set-state-in-effect -- loading gate while profile is fetched */
   useEffect(() => {
     if (!user?.id) {
-      setProfile(null)
       return
     }
     let cancelled = false
@@ -99,11 +105,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cancelled = true
     }
   }, [user?.id])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    applyDocumentTheme(profile?.preferences?.theme)
+  }, [profile?.preferences?.theme])
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
+    })
+    return { error: error as Error | null }
+  }, [])
+
+  const signInWithGoogle = useCallback(async () => {
+    const redirectTo = `${window.location.origin}/auth/callback`
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo },
     })
     return { error: error as Error | null }
   }, [])
@@ -135,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       isAdmin,
       signIn,
+      signInWithGoogle,
       signUp,
       signOut,
       refreshProfile,
@@ -146,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       isAdmin,
       signIn,
+      signInWithGoogle,
       signUp,
       signOut,
       refreshProfile,
@@ -155,6 +177,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+/** Hook is colocated with provider (common React pattern). */
+// eslint-disable-next-line react-refresh/only-export-components -- allow hook next to provider
 export function useAuthContext(): AuthContextValue {
   const ctx = useContext(AuthContext)
   if (!ctx) {

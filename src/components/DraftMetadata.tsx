@@ -11,11 +11,14 @@ export default function DraftMetadata({ topic, onUpdate }: DraftMetadataProps) {
   const [slug, setSlug] = useState(topic.slug || '')
   const [description, setDescription] = useState(topic.meta_description || '')
 
+  /* Sync local fields when the loaded topic row changes (e.g. navigation). */
+  /* eslint-disable react-hooks/set-state-in-effect -- reset controlled inputs when topic changes */
   useEffect(() => {
     setTitle(topic.draft_title || '')
     setSlug(topic.slug || '')
     setDescription(topic.meta_description || '')
   }, [topic.id, topic.draft_title, topic.slug, topic.meta_description])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const generateSlug = (text: string) => {
     return text
