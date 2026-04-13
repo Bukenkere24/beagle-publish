@@ -1,12 +1,6 @@
-export type UserRole = 'admin' | 'editor'
+import type { UserPreferences } from './preferences'
 
-export interface UserPreferences {
-  defaultTone?: 'professional' | 'casual' | 'technical' | 'creative'
-  topicsOfInterest?: string[]
-  publicationName?: string
-  linkedinProfileUrl?: string
-  theme?: 'light' | 'dark' | 'system'
-}
+export type UserRole = 'admin' | 'editor'
 
 export interface Profile {
   id: string

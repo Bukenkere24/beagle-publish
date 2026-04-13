@@ -1,9 +1,11 @@
 import { Link, Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutList, FileEdit, Settings, LogOut, Shield } from 'lucide-react'
+import { LayoutList, FileEdit, Settings, LogOut, Shield, Moon, Sun, Monitor } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { usePreferences } from '../contexts/PreferencesContext'
 
 export default function Layout() {
   const { user, signOut, isAdmin } = useAuth()
+  const { preferences, toggleTheme } = usePreferences()
   const navigate = useNavigate()
   const location = useLocation()
   const draftsActive = location.pathname.startsWith('/drafts')
@@ -12,6 +14,8 @@ export default function Layout() {
     await signOut()
     navigate('/login', { replace: true })
   }
+
+  const ThemeIcon = preferences.theme === 'dark' ? Moon : preferences.theme === 'light' ? Sun : Monitor
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-4 py-3 rounded-beagle transition-all font-medium ${
@@ -27,14 +31,20 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen bg-beagle-bg">
       <aside className="flex w-64 shrink-0 flex-col border-r border-beagle-border beagle-glass">
-        <div className="border-b border-beagle-border p-8">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-2 h-2 rounded-full bg-beagle-primary animate-pulse" />
-            <h1 className="font-heading text-lg font-bold text-beagle-text-heading uppercase tracking-widest">
-              Beagle
-            </h1>
+        <div className="border-b border-beagle-border p-6 flex flex-col gap-4">
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo-full.svg" alt="Beagle" className="w-32" />
+          </Link>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] text-beagle-text-muted font-bold uppercase tracking-widest">Publish SaaS</p>
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-beagle bg-beagle-surface border border-beagle-border text-beagle-text-muted hover:text-beagle-primary transition-all"
+              title={`Theme: ${preferences.theme}`}
+            >
+              <ThemeIcon size={14} />
+            </button>
           </div>
-          <p className="text-[10px] text-beagle-text-muted font-bold uppercase tracking-widest">Publish SaaS</p>
         </div>
         <nav className="flex-1 space-y-2 p-6">
           <NavLink to="/topics" className={linkClass} end>
@@ -56,16 +66,24 @@ export default function Layout() {
             </NavLink>
           )}
         </nav>
-        <div className="border-t border-beagle-border p-4 text-sm text-beagle-text-dimmed">
-          <p className="truncate" title={user?.email ?? ''}>
-            {user?.email ?? 'Signed in'}
-          </p>
+        <div className="border-t border-beagle-border p-4 text-sm">
+          <div className="flex items-center gap-3 px-2 mb-3">
+            <div className="w-8 h-8 rounded-full bg-beagle-primary/10 flex items-center justify-center text-beagle-primary font-bold text-xs">
+              {user?.email?.[0].toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-beagle-text-heading font-bold text-xs truncate" title={user?.email ?? ''}>
+                {user?.email?.split('@')[0]}
+              </p>
+              <p className="text-beagle-text-dimmed text-[10px] truncate">{user?.email}</p>
+            </div>
+          </div>
           <button
             type="button"
             onClick={() => void handleSignOut()}
-            className="mt-2 flex w-full items-center gap-2 rounded-beagle px-2 py-2 text-left text-beagle-text-muted hover:bg-beagle-border/50"
+            className="flex w-full items-center gap-2 rounded-beagle px-3 py-2 text-left text-beagle-text-muted hover:bg-beagle-error/5 hover:text-beagle-error transition-all font-semibold text-xs"
           >
-            <LogOut size={16} strokeWidth={1} />
+            <LogOut size={14} strokeWidth={2} />
             Sign out
           </button>
         </div>

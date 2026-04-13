@@ -1,6 +1,8 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="240" height="64" viewBox="0 0 240 64" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="64" height="64" rx="16" fill="#4552FF"/>
   <path d="M18 16V48H32C36 48 39 46.5 41 44C43 41.5 44 38.5 44 35C44 31.5 43 28.5 41 26C39 23.5 36 22 32 22H18ZM26 24H32C35 24 37 25 38 27C39 29 40 31.5 40 35C40 38.5 39 41 38 43C37 45 35 46 32 46H26V24Z" fill="white"/>
   <circle cx="28" cy="30" r="2.5" fill="white"/>
   <path d="M42 16L48 24L54 16H42Z" fill="white" opacity="0.8"/>
+  <text x="80" y="42" font-family="Space Grotesk, Arial, sans-serif" font-weight="bold" font-size="28" fill="#FFFFFF">Beagle</text>
+  <text x="175" y="42" font-family="Space Grotesk, Arial, sans-serif" font-weight="normal" font-size="28" fill="#4552FF">Publish</text>
 </svg>

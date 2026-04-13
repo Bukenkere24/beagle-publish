@@ -6,7 +6,7 @@ import DraftEditorPage from './pages/DraftEditorPage'
 import SettingsPage from './pages/SettingsPage'
 import AdminDashboard from './pages/AdminDashboard'
 import LoginPage from './pages/LoginPage'
-import RoleGuard from './components/RoleGuard'
+import { RoleGuard } from './components/RoleGuard'
 
 import AuthCallback from './pages/AuthCallback'
 

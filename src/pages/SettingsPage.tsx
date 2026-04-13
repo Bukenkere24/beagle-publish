@@ -1,56 +1,45 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
-import { supabase } from '../lib/supabase'
+import { usePreferences } from '../contexts/PreferencesContext'
 import { LogOut, Save, Shield, User, Sliders, Moon, Sun, Monitor, Loader2 } from 'lucide-react'
 
 export default function SettingsPage() {
-  const { user, profile, signOut, refreshProfile } = useAuth()
+  const { user, profile, signOut } = useAuth()
+  const { preferences, updatePreferences } = usePreferences()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   
   const [formData, setFormData] = useState({
     full_name: profile?.full_name || '',
-    defaultTone: profile?.preferences?.defaultTone || 'professional',
-    publicationName: profile?.preferences?.publicationName || '',
-    topicsOfInterest: profile?.preferences?.topicsOfInterest?.join(', ') || '',
-    theme: profile?.preferences?.theme || 'dark'
+    defaultTone: preferences.defaultTone,
+    publicationName: preferences.publicationName,
+    topicsOfInterest: preferences.topicsOfInterest.join(', '),
+    theme: preferences.theme
   })
 
   useEffect(() => {
-    if (profile) {
-      setFormData({
-        full_name: profile.full_name || '',
-        defaultTone: profile.preferences?.defaultTone || 'professional',
-        publicationName: profile.preferences?.publicationName || '',
-        topicsOfInterest: profile.preferences?.topicsOfInterest?.join(', ') || '',
-        theme: profile.preferences?.theme || 'dark'
-      })
-    }
-  }, [profile])
+    setFormData({
+      full_name: profile?.full_name || '',
+      defaultTone: preferences.defaultTone,
+      publicationName: preferences.publicationName,
+      topicsOfInterest: preferences.topicsOfInterest.join(', '),
+      theme: preferences.theme
+    })
+  }, [profile, preferences])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
     setLoading(true)
     setSuccess(false)
 
     try {
-      const { error } = await supabase
-        .from('bcc_profiles')
-        .update({
-          full_name: formData.full_name,
-          preferences: {
-            defaultTone: formData.defaultTone,
-            publicationName: formData.publicationName,
-            topicsOfInterest: formData.topicsOfInterest.split(',').map(s => s.trim()).filter(Boolean),
-            theme: formData.theme
-          }
-        })
-        .eq('id', user.id)
-
-      if (error) throw error
-      await refreshProfile()
+      await updatePreferences({
+        defaultTone: formData.defaultTone as any,
+        publicationName: formData.publicationName,
+        topicsOfInterest: formData.topicsOfInterest.split(',').map(s => s.trim()).filter(Boolean),
+        theme: formData.theme as any
+      })
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {

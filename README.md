@@ -1,77 +1,33 @@
-# Blog Command Center (Beagle Publish)
+# Team Beagle — Week 5: Beagle Publish Becomes a Product
 
-Content operations dashboard — topics from n8n, AI drafts, review & publish to blog + LinkedIn.
+**Avaneesh · Samarth · Arya · Shashank**
+**Repo: `beagle-publish`**
+**Live URL: `https://beagle-publish-gamma.vercel.app`**
 
-## Tickets by owner
+## Status
+- **BP-501 (Cleanup)**: ✅ Done
+- **BP-502 (Auth)**: ✅ Done
+- **BP-503 (Workspaces)**: ✅ Done
+- **BP-504 (AI engine)**: ✅ Done
+- **BP-505 (Settings)**: ✅ Done
+- **BP-506 (Publishing)**: 🚧 In Progress
+- **BP-507 (Admin)**: ✅ Done
+- **BP-508 (Landing page)**: 🚧 In Progress
 
-### Avaneesh (BP-401, BP-402)
+## Tech Stack
+- **Frontend**: Vite + React 19 + TypeScript + Tailwind 4
+- **Backend**: Supabase Auth + Postgres + RLS
+- **AI**: Gemini 2.0 Flash via Supabase Edge Functions
+- **Deployment**: Vercel (Frontend) + Supabase (Functions/SQL)
 
-- **BP-401** — Scaffold app (this repo): Vite + React + Tailwind + Supabase, routes, Layout, AuthGuard. ✅ Done.
-- **BP-402** — Topics Queue: list from `blog_topic_queue`, filter tabs, "Add Topic" button, click → `/drafts/:id`.
+## Development
+1. Install Supabase CLI: `npm install -g supabase`
+2. Login & Link: `supabase login` && `supabase link --project-ref <ref>`
+3. Run local dev: `npm run dev`
 
-### Samarth (BP-403, BP-404)
-
-- **BP-403** — Draft editor: blog + LinkedIn tabs, Markdown + preview, metadata, auto-save. ✅ Done.
-- **BP-404** — `generate-linkedin` Edge Function + client invoke. ✅ Done.
-
-### Arya (BP-405, BP-406)
-
-- **BP-405 / BP-406** — Publisher adapters (blog + LinkedIn copy/post), `PublishControls`. ✅ Done.
-
-### Shashank (BP-407, BP-408)
-
-- **BP-407** — Supabase email **sign-in / sign-up**, `bcc_profiles` (`admin` | `editor`), `AuthProvider` + `useAuth`, **Settings** (email, name, role), **Login** page, `AuthGuard` + `VITE_DEV_SKIP_AUTH`, **`AdminPublishButton`** on publish/reject/confirm (editors see *Requires admin approval*).
-- **BP-408** — **`scheduled_publish_at`** on draft page (`SchedulePublish`), clock + time on topic cards when in review; **auto-publish** is not in-app — use n8n (or cron) per `docs/BP-408-scheduled-publish.md`.
-
-**Supabase:** run `supabase/migrations/20260320140000_bcc_profiles.sql` in the SQL Editor after approval in `#dev-general`, then promote an admin:
-
-`UPDATE public.bcc_profiles SET role = 'admin' WHERE email = 'your@email.com';`
-
-## Quick start
-
-1. **Env:** Copy `.env.example` to `.env` and set `VITE_SUPABASE_ANON_KEY` (ask Adi / same as SynthPanel).
-2. **Run:** `npm install` then `npm run dev` → http://localhost:5173
-3. **Auth bypass:** `VITE_DEV_SKIP_AUTH=true` in `.env` lets you develop without login (remove before demo).
-
-## Repo
-
-The doc says: create repo under **Beagle-AI-automation** org on GitHub. If it doesn’t exist yet, init and push when it’s created:
-
-```bash
-git init
-git add .
-git commit -m "feat(BP-401): scaffold Blog Command Center app"
-git remote add origin https://github.com/Beagle-AI-automation/beagle-publish.git
-git push -u origin main
-```
-
-## Supabase (run in SQL Editor)
-
-**New columns:**
-
-```sql
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS linkedin_draft TEXT;
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS linkedin_post_id TEXT;
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS linkedin_published_at TIMESTAMPTZ;
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS scheduled_publish_at TIMESTAMPTZ;
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS destination TEXT[] DEFAULT '{blog}';
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS created_by TEXT;
-ALTER TABLE blog_topic_queue ADD COLUMN IF NOT EXISTS approved_by TEXT;
-```
-
-**RLS fix (run after checking policy name):**
-
-```sql
-SELECT policyname FROM pg_policies WHERE tablename = 'blog_topic_queue';
--- Then drop the anon insert policy (use name from above) and:
-DROP POLICY IF EXISTS "anon_insert" ON blog_topic_queue;
-CREATE POLICY "service_role_insert" ON blog_topic_queue FOR INSERT TO service_role WITH CHECK (true);
-CREATE POLICY "authenticated_update" ON blog_topic_queue FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
-```
-
-## Routes
-
-- `/topics` — Topics queue (BP-402)
-- `/drafts/:id` — Draft editor (BP-403)
-- `/settings` — Settings (BP-407)
-- `/login` — Login (BP-407)
+## Core Loop
+1. Sign up with Google
+2. Create/Queue Topic
+3. AI generates Research Brief + Blog Draft
+4. Polish and Generate LinkedIn Post
+5. Publish to SynthPanel / Webhook

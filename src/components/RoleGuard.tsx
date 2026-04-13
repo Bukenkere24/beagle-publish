@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, ButtonHTMLAttributes } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Loader2 } from 'lucide-react'
@@ -8,7 +8,7 @@ interface RoleGuardProps {
   allowedRoles: ('admin' | 'editor')[]
 }
 
-export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
+export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const { profile, loading, isAdmin } = useAuth()
 
   if (loading) {
@@ -28,4 +28,17 @@ export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   }
 
   return <>{children}</>
+}
+
+interface AdminPublishButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode
+}
+
+export function AdminPublishButton({ children, ...props }: AdminPublishButtonProps) {
+  const { isAdmin, loading } = useAuth()
+
+  if (loading) return null
+  if (!isAdmin) return null
+
+  return <button {...props}>{children}</button>
 }
