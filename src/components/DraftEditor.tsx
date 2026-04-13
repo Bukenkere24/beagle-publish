@@ -49,7 +49,7 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
       setLinkedinDraft(generated)
       onUpdate({ linkedin_draft: generated })
       setActiveTab('linkedin')
-    } catch (error) {
+    } catch {
       alert('Generation failed. Please try again.')
     } finally {
       setIsGenerating(false)
