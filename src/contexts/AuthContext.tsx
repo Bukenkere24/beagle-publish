@@ -28,11 +28,7 @@ export type Profile = {
 const PROFILE_TABLE =
   (import.meta.env.VITE_PROFILES_TABLE as string | undefined) || 'bcc_profiles'
 
-export const isDevAuthBypass =
-  import.meta.env.DEV && import.meta.env.VITE_DEV_SKIP_AUTH === 'true'
-
 type AuthContextValue = {
-  skipAuth: boolean
   user: User | null
   profile: Profile | null
   loading: boolean
@@ -58,8 +54,6 @@ function mapProfileRow(data: Record<string, unknown>): Profile {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const skipAuth = isDevAuthBypass
-
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -96,22 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true
     ;(async () => {
-      if (skipAuth) {
-        if (!mounted) return
-        setUser(null)
-        setProfile({
-          id: 'dev-skip-auth',
-          email: 'dev@local',
-          full_name: 'Dev Mode',
-          role: 'admin',
-          created_at: null,
-          avatar_url: null,
-          preferences: null,
-        })
-        setLoading(false)
-        return
-      }
-
       const { data } = await supabase.auth.getSession()
       const u = data.session?.user ?? null
       if (!mounted) return
@@ -132,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false
       subscription.unsubscribe()
     }
-  }, [refreshProfile, skipAuth])
+  }, [refreshProfile])
 
   const signIn = useCallback(async (email: string, password: string) => {
     return supabase.auth.signInWithPassword({ email, password })
@@ -142,14 +120,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return supabase.auth.signOut()
   }, [])
 
-  const canPublish = useMemo(() => {
-    if (skipAuth) return true
-    return profile?.role === 'admin'
-  }, [profile?.role, skipAuth])
+  const canPublish = useMemo(() => profile?.role === 'admin', [profile?.role])
 
   const value = useMemo(
     () => ({
-      skipAuth,
       user,
       profile,
       loading,
@@ -160,7 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut,
     }),
     [
-      skipAuth,
       user,
       profile,
       loading,

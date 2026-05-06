@@ -11,7 +11,6 @@ Content operations dashboard — topics from n8n, AI drafts, review & publish to
 
 1. **Env:** Copy `.env.example` to `.env` and set `VITE_SUPABASE_ANON_KEY` (ask Adi / same as SynthPanel).
 2. **Run:** `npm install` then `npm run dev` → http://localhost:5173
-3. **Auth bypass:** `VITE_DEV_SKIP_AUTH=true` in `.env` lets you develop without login (remove before demo).
 
 ## Repo
 

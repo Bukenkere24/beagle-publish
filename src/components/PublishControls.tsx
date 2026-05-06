@@ -23,7 +23,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
   const [rejectConfirm, setRejectConfirm] = useState(false)
   const [publishing, setPublishing] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
-  const { canPublish, skipAuth, profile } = useAuth()
+  const { canPublish, profile } = useAuth()
   const publishBlockedReason = 'Requires admin approval'
 
   const draft: Draft = {
@@ -108,7 +108,7 @@ export default function PublishControls({ topic, onPublishSuccess }: PublishCont
           (adapter.name === 'blog' && topic.status === 'published') ||
           (adapter.name === 'linkedin' && !!topic.linkedin_published_at)
 
-        const allowedByRole = skipAuth || profile?.role === 'admin'
+        const allowedByRole = profile?.role === 'admin'
         const disabled = !canPublish || isPublished || !allowedByRole
 
         return (

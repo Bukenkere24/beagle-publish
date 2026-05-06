@@ -28,7 +28,7 @@ type PreferencesContextValue = {
 const PreferencesContext = createContext<PreferencesContextValue | null>(null)
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const { user, profile, skipAuth, refreshProfile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
   const [preferences, setPreferences] = useState<UserPreferences>(() =>
     mergePreferences(profile?.preferences),
   )
@@ -55,7 +55,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const flushSave = useCallback(async () => {
     const next = pendingRef.current
     pendingRef.current = null
-    if (!next || skipAuth || !user?.id) return
+    if (!next || !user?.id) return
 
     setSaving(true)
     setSaveError(null)
@@ -72,7 +72,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     } finally {
       setSaving(false)
     }
-  }, [refreshProfile, skipAuth, user?.id])
+  }, [refreshProfile, user?.id])
 
   const updatePreferences = useCallback(
     (partial: Partial<UserPreferences>) => {
@@ -81,7 +81,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         pendingRef.current = merged
 
         if (timerRef.current) clearTimeout(timerRef.current)
-        if (skipAuth || !user?.id) {
+        if (!user?.id) {
           return merged
         }
 
@@ -93,7 +93,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         return merged
       })
     },
-    [flushSave, skipAuth, user?.id],
+    [flushSave, user?.id],
   )
 
   useEffect(() => {

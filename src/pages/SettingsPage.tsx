@@ -18,7 +18,7 @@ const THEMES: { value: (typeof DEFAULT_PREFERENCES)['theme']; label: string }[] 
 ]
 
 export default function SettingsPage() {
-  const { user, profile, skipAuth, signOut } = useAuth()
+  const { user, profile, signOut } = useAuth()
   const { preferences, updatePreferences, saving, saveError } = usePreferences()
   const [tagInput, setTagInput] = useState(() => preferences.topicsOfInterest.join(', '))
 
@@ -28,8 +28,8 @@ export default function SettingsPage() {
   }, [preferences.topicsOfInterest])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const email = profile?.email ?? user?.email ?? (skipAuth ? 'dev@local' : null)
-  const role = profile?.role ?? (skipAuth ? 'admin' : null)
+  const email = profile?.email ?? user?.email ?? null
+  const role = profile?.role ?? null
   const displayName = profile?.full_name ?? '—'
   const avatarUrl = profile?.avatar_url
 
@@ -191,17 +191,15 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {!skipAuth && (
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            className="rounded-full px-6 py-3 font-semibold border border-zinc-300 dark:border-beagle-border text-zinc-700 dark:text-beagle-text-muted hover:bg-zinc-100 dark:hover:bg-beagle-primary-ghost hover:text-beagle-primary transition-colors"
-          >
-            Sign out
-          </button>
-        </div>
-      )}
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={() => void signOut()}
+          className="rounded-full px-6 py-3 font-semibold border border-zinc-300 dark:border-beagle-border text-zinc-700 dark:text-beagle-text-muted hover:bg-zinc-100 dark:hover:bg-beagle-primary-ghost hover:text-beagle-primary transition-colors"
+        >
+          Sign out
+        </button>
+      </div>
     </motion.section>
   )
 }

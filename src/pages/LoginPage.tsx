@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { isDevAuthBypass } from '../hooks/useAuth'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -19,8 +18,6 @@ export default function LoginPage() {
   const [oauthLoading, setOauthLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
-
-  const showDevBypassNote = isDevAuthBypass
 
   const redirectTo = `${window.location.origin}/auth/callback`
 
@@ -82,13 +79,6 @@ export default function LoginPage() {
         <p className="text-center text-sm text-zinc-500 dark:text-beagle-text-muted mb-6">
           Sign in to your workspace
         </p>
-
-        {showDevBypassNote && (
-          <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
-            Dev only: auth bypass is on (<code className="text-xs">VITE_DEV_SKIP_AUTH=true</code>). It
-            cannot run in production builds.
-          </div>
-        )}
 
         <button
           type="button"

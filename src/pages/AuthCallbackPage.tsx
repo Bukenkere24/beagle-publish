@@ -11,6 +11,21 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     let cancelled = false
+    let navigated = false
+    const timeouts: ReturnType<typeof setTimeout>[] = []
+
+    const go = (path: '/topics' | '/login') => {
+      if (cancelled || navigated) return
+      navigated = true
+      timeouts.forEach(clearTimeout)
+      navigate(path, { replace: true })
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) go('/topics')
+    })
 
     const resolveSession = async (attempt: number) => {
       const {
@@ -18,30 +33,35 @@ export default function AuthCallbackPage() {
         error: sessionError,
       } = await supabase.auth.getSession()
 
-      if (cancelled) return
+      if (cancelled || navigated) return
 
       if (sessionError) {
         console.error('Auth callback error:', sessionError)
         setError(sessionError.message)
-        setTimeout(() => navigate('/login', { replace: true }), 3200)
+        const t = setTimeout(() => go('/login'), 3200)
+        timeouts.push(t)
         return
       }
 
       if (session) {
-        navigate('/topics', { replace: true })
+        go('/topics')
         return
       }
 
       if (attempt < MAX_ATTEMPTS) {
-        setTimeout(() => void resolveSession(attempt + 1), RETRY_MS)
+        const t = setTimeout(() => void resolveSession(attempt + 1), RETRY_MS)
+        timeouts.push(t)
       } else {
-        navigate('/login', { replace: true })
+        go('/login')
       }
     }
 
     void resolveSession(0)
+
     return () => {
       cancelled = true
+      subscription.unsubscribe()
+      timeouts.forEach(clearTimeout)
     }
   }, [navigate])
 
