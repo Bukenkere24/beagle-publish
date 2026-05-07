@@ -43,7 +43,7 @@ const LandingPage = () => {
               Control your <span className="text-beagle-primary italic">Content Pipeline</span>
             </h1>
             <p className="text-beagle-text-sub text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed pt-4">
-              Integrated dashboard to scout topics, generate AI drafts, and publish directly to your blog and LinkedIn. One source of truth for your entire content strategy.
+              Integrated dashboard to queue topics, generate AI drafts, and publish directly to your blog and LinkedIn. One source of truth for your entire content strategy.
             </p>
             
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
@@ -71,8 +71,8 @@ const LandingPage = () => {
             {[
               {
                 icon: <LayoutList size={24} />,
-                title: "Topic Scouting",
-                desc: "Auto-ingest trending topics from Hacker News and Reddit directly into your queue."
+                title: "Topic queue",
+                desc: "Create and organize topics in one place—filter by status and move from idea to published."
               },
               {
                 icon: <FileEdit size={24} />,
@@ -87,7 +87,7 @@ const LandingPage = () => {
               {
                 icon: <Rocket size={24} />,
                 title: "Unified Publish",
-                desc: "Official adapters to push live at the click of a button or schedule for later."
+                desc: "Official adapters to push live from the dashboard when your draft is ready."
               }
             ].map((feature, i) => (
               <motion.div
