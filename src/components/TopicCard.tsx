@@ -1,7 +1,5 @@
 import { motion } from 'framer-motion'
-import { Clock } from 'lucide-react'
 import StatusBadge from './StatusBadge'
-import { formatScheduledAt } from '../lib/time'
 import type { TopicRow } from '../types/topic'
 
 function relativeTime(dateStr: string): string {
@@ -40,12 +38,6 @@ export default function TopicCard({
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <StatusBadge status={topic.status} />
         <span className="text-beagle-text-muted text-xs font-medium uppercase tracking-wider">{topic.source}</span>
-        {topic.scheduled_publish_at && topic.status === 'review' && (
-          <span className="inline-flex items-center gap-1.5 text-beagle-warning text-xs font-medium px-2 py-0.5 rounded-full bg-beagle-warning/10 border border-beagle-warning/20">
-            <Clock size={12} strokeWidth={2} aria-hidden />
-            {formatScheduledAt(topic.scheduled_publish_at)}
-          </span>
-        )}
         {score != null && (
           <div className="flex items-center gap-2 ml-auto">
             <div className="w-16 h-1.5 bg-beagle-border rounded-full overflow-hidden">

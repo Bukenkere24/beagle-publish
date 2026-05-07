@@ -7,7 +7,6 @@ import type { TopicRow } from '../types/topic'
 import DraftEditor from '../components/DraftEditor'
 import DraftMetadata from '../components/DraftMetadata'
 import PublishControls from '../components/PublishControls'
-import SchedulePublish from '../components/SchedulePublish'
 import { useAuth } from '../hooks/useAuth'
 
 export default function DraftEditorPage() {
@@ -158,9 +157,6 @@ export default function DraftEditorPage() {
         </div>
         <PublishControls topic={topic} onPublishSuccess={fetchTopic} />
       </div>
-
-      {/* BP-408: spec — date picker below Publish Controls */}
-      <SchedulePublish topic={topic} onSaved={fetchTopic} />
     </motion.section>
   )
 }

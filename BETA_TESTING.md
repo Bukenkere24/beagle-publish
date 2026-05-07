@@ -61,9 +61,8 @@
 - [ ] **Admins** can publish and reject as normal
 - [ ] Sidebar shows signed-in **email** and **Sign out**
 
-### Schedule (BP-408 — Shashank)
-- [ ] On a topic in **`review`**, **Schedule publish** saves `scheduled_publish_at` (and **Clear schedule** clears it)
-- [ ] Topics list shows **clock + scheduled time** for in-review topics that have a schedule
+### Schedule (BP-408 — deferred to Week 7+)
+- [ ] No in-app scheduling UI in Week 6; `scheduled_publish_at` may still exist in the DB for future automation
 
 ### Settings & polish
 - [ ] Layout is readable on small viewport (responsive)

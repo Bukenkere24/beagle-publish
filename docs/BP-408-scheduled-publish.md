@@ -1,6 +1,8 @@
-# BP-408 — Scheduled auto-publish
+# BP-408 — Scheduled auto-publish (deferred)
 
-The app saves **`scheduled_publish_at`** on `blog_topic_queue` when a reviewer sets a date/time on a draft in **`review`**.
+**Week 6 (BP-611):** The in-app schedule picker and topic-card schedule badges were **removed** so we do not imply auto-publish until automation exists. The **`scheduled_publish_at`** column remains on `blog_topic_queue` for a future Week 7+ cron/n8n flow.
+
+When scheduling ships again, the app would save **`scheduled_publish_at`** on `blog_topic_queue` when a reviewer sets a date/time on a draft in **`review`**.
 
 **Recommended:** n8n Cloud every 15 minutes:
 
