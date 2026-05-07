@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     let cancelled = false
     setLoading(true)
-    getProfile(user.id).then((p) => {
+    getProfile(user.id).then((p: Profile | null) => {
       if (!cancelled) {
         setProfile(p)
         setLoading(false)

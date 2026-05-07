@@ -44,7 +44,7 @@ export default function TopicsPage() {
       
       let filteredData = data
       if (activeFilter !== 'all') {
-        filteredData = filteredData.filter(t => t.status === activeFilter)
+        filteredData = filteredData.filter((t: TopicRow) => t.status === activeFilter)
       }
       
       setTopics(filteredData)
