@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Users, FileText, Search, Filter } from 'lucide-react'
+import { Users, FileText, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { TopicRow } from '../types/topic'
 import TopicCard from '../components/TopicCard'
 import StatusBadge from '../components/StatusBadge'
 
 export default function AdminDashboard() {
+  const navigate = useNavigate()
   const [topics, setTopics] = useState<TopicRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -96,10 +98,6 @@ export default function AdminDashboard() {
             className="w-full bg-beagle-surface border border-beagle-border rounded-full pl-12 pr-4 py-3 text-beagle-text-body focus:outline-none focus:border-beagle-primary transition-colors"
           />
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 rounded-full border border-beagle-border text-beagle-text-muted hover:text-beagle-text-heading hover:bg-beagle-border transition-all font-bold">
-          <Filter size={18} />
-          Filters
-        </button>
       </div>
 
       {/* Topics Grid */}
@@ -120,7 +118,7 @@ export default function AdminDashboard() {
               </div>
               <TopicCard 
                 topic={topic} 
-                onClick={() => window.location.href = `/drafts/${topic.id}`}
+                onClick={() => navigate(`/drafts/${topic.id}`)}
               />
             </div>
           ))}
