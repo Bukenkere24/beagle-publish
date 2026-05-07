@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { getCorsHeaders } from '../_shared/cors.ts'
 
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
 
 async function callGemini(systemPrompt: string, userPrompt: string, apiKey: string): Promise<string> {
   const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
