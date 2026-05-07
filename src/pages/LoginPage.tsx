@@ -3,10 +3,6 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
 
-const skipAuth =
-  import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
-  import.meta.env.VITE_DEV_SKIP_AUTH === '1'
-
 export default function LoginPage() {
   const { user, signIn, signUp, signInWithGoogle } = useAuth()
   const location = useLocation()
@@ -19,7 +15,6 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  if (skipAuth) return <Navigate to="/topics" replace />
   if (user) return <Navigate to={from} replace />
 
   async function handleSubmit(e: React.FormEvent) {

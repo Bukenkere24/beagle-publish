@@ -7,7 +7,7 @@ export default function AuthCallback() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/topics', { replace: true })
       }
@@ -15,6 +15,10 @@ export default function AuthCallback() {
         navigate('/login', { replace: true })
       }
     })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [navigate])
 
   return (

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Loader2 } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { getDraft, saveDraft } from '../lib/db/drafts'
 import type { TopicRow } from '../types/topic'
 import DraftEditor from '../components/DraftEditor'
 import DraftMetadata from '../components/DraftMetadata'
@@ -23,14 +23,7 @@ export default function DraftEditorPage() {
     if (!id || !user) return
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('blog_topic_queue')
-        .select('*')
-        .eq('id', id)
-        .single()
-      
-      if (error) throw error
-      const topicData = data as TopicRow
+      const topicData = await getDraft(id)
       
       // Ownership check (BP-503)
       if (topicData.user_id && topicData.user_id !== user.id && profile?.role !== 'admin') {
@@ -58,12 +51,7 @@ export default function DraftEditorPage() {
     
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('blog_topic_queue')
-        .update(updates)
-        .eq('id', id)
-      
-      if (error) throw error
+      await saveDraft(id, updates)
       setLastSaved(new Date())
     } catch (err) {
       console.error('Save failed:', err instanceof Error ? err.message : JSON.stringify(err, null, 2))

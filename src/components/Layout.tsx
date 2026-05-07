@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { Link, Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutList, FileEdit, Settings, LogOut, Shield, Moon, Sun, Monitor } from 'lucide-react'
+import { LayoutList, FileEdit, Settings, LogOut, Shield, Moon, Sun, Monitor, Menu, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { usePreferences } from '../contexts/PreferencesContext'
 
@@ -8,6 +9,7 @@ export default function Layout() {
   const { preferences, toggleTheme } = usePreferences()
   const navigate = useNavigate()
   const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const draftsActive = location.pathname.startsWith('/drafts')
 
   async function handleSignOut() {
@@ -28,13 +30,36 @@ export default function Layout() {
     ? 'flex items-center gap-3 px-4 py-3 rounded-beagle bg-beagle-primary/10 text-beagle-primary font-medium shadow-lg shadow-beagle-primary/5'
     : 'flex items-center gap-3 px-4 py-3 rounded-beagle text-beagle-text-muted hover:bg-beagle-surface hover:text-beagle-text-heading transition-all font-medium'
 
+  const closeSidebar = () => setSidebarOpen(false)
+
   return (
     <div className="flex min-h-screen bg-beagle-bg">
-      <aside className="flex w-64 shrink-0 flex-col border-r border-beagle-border beagle-glass">
+      {/* Mobile Hamburger */}
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-beagle-surface border border-beagle-border rounded-beagle text-beagle-text-muted"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-64 flex flex-col border-r border-beagle-border beagle-glass
+        transform transition-transform duration-300 md:translate-x-0 md:static
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="border-b border-beagle-border p-6 flex flex-col gap-4">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/logo-full.svg" alt="Beagle" className="w-32" />
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-3" onClick={closeSidebar}>
+              <img src="/logo-full.svg" alt="Beagle" className="w-32" />
+            </Link>
+            <button
+              onClick={closeSidebar}
+              className="md:hidden p-1 text-beagle-text-muted hover:text-beagle-primary"
+            >
+              <X size={20} />
+            </button>
+          </div>
           <div className="flex items-center justify-between">
             <p className="text-[10px] text-beagle-text-muted font-bold uppercase tracking-widest">Publish SaaS</p>
             <button
@@ -47,20 +72,20 @@ export default function Layout() {
           </div>
         </div>
         <nav className="flex-1 space-y-2 p-6">
-          <NavLink to="/topics" className={linkClass} end>
+          <NavLink to="/topics" className={linkClass} onClick={closeSidebar} end>
             <LayoutList size={20} strokeWidth={1.5} />
             Topics
           </NavLink>
-          <Link to="/topics" className={draftsClass}>
+          <Link to="/topics" className={draftsClass} onClick={closeSidebar}>
             <FileEdit size={20} strokeWidth={1.5} />
             Drafts
           </Link>
-          <NavLink to="/settings" className={linkClass}>
+          <NavLink to="/settings" className={linkClass} onClick={closeSidebar}>
             <Settings size={20} strokeWidth={1.5} />
             Settings
           </NavLink>
           {isAdmin && (
-            <NavLink to="/admin" className={linkClass}>
+            <NavLink to="/admin" className={linkClass} onClick={closeSidebar}>
               <Shield size={20} strokeWidth={1.5} />
               Admin Panel
             </NavLink>
@@ -88,7 +113,16 @@ export default function Layout() {
           </button>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto p-8">
+
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
+      <main className="flex-1 overflow-auto p-4 md:p-8">
         <Outlet />
       </main>
     </div>

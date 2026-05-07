@@ -71,8 +71,8 @@ const LandingPage = () => {
             {[
               {
                 icon: <LayoutList size={24} />,
-                title: "Topic queue",
-                desc: "Create and organize topics in one place—filter by status and move from idea to published."
+                title: "Topic Scouting",
+                desc: "Organize and track your content ideas in a centralized pipeline before drafting."
               },
               {
                 icon: <FileEdit size={24} />,

@@ -9,6 +9,7 @@ import {
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { getProfile } from '../lib/db/profiles'
 import type { Profile } from '../types/profile'
 
 type AuthContextValue = {
@@ -30,20 +31,6 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-async function fetchProfile(userId: string): Promise<Profile | null> {
-  const { data, error } = await supabase
-    .from('bcc_profiles')
-    .select('*')
-    .eq('id', userId)
-    .maybeSingle()
-
-  if (error) {
-    console.warn('bcc_profiles:', error.message)
-    return null
-  }
-  return data as Profile | null
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [user, setUser] = useState<User | null>(null)
@@ -56,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setProfile(null)
       return
     }
-    const p = await fetchProfile(uid)
+    const p = await getProfile(uid)
     setProfile(p)
   }, [user?.id])
 
@@ -90,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     let cancelled = false
     setLoading(true)
-    fetchProfile(user.id).then((p) => {
+    getProfile(user.id).then((p) => {
       if (!cancelled) {
         setProfile(p)
         setLoading(false)
@@ -127,10 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const isAdmin = useMemo(() => {
-    const skipAuth =
-      import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
-      import.meta.env.VITE_DEV_SKIP_AUTH === '1'
-    return skipAuth || profile?.role === 'admin'
+    return profile?.role === 'admin'
   }, [profile?.role])
 
   const signInWithGoogle = useCallback(async () => {

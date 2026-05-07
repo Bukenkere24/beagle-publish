@@ -13,6 +13,7 @@ import { generateLinkedInDraft } from "../lib/linkedin-generator";
 import { generateBlogDraft } from "../lib/blog-generator";
 import { useAuth } from "../hooks/useAuth";
 import type { TopicRow } from "../types/topic";
+import { toast } from "sonner";
 
 interface DraftEditorProps {
   topic: TopicRow;
@@ -77,8 +78,9 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
         slug: data.slug,
         status: topic.status === "queued" ? "review" : topic.status,
       });
+      toast.success("Blog draft generated!");
     } catch (error) {
-      alert("Blog generation failed. Please try again.");
+      toast.error("Blog generation failed. Please try again.");
     } finally {
       setIsGeneratingBlog(false);
     }
@@ -97,8 +99,9 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
       setLinkedinDraft(generated);
       onUpdate({ linkedin_draft: generated });
       setActiveTab("linkedin");
+      toast.success("LinkedIn post generated!");
     } catch (error) {
-      alert("LinkedIn generation failed. Please try again.");
+      toast.error("LinkedIn generation failed. Please try again.");
     } finally {
       setIsGeneratingLinkedIn(false);
     }

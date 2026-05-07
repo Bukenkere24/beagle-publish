@@ -5,12 +5,16 @@ import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext'
 import { PreferencesProvider } from './contexts/PreferencesContext'
 
+import { GlobalErrorBoundary } from './components/GlobalErrorBoundary'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <PreferencesProvider>
-        <App />
-      </PreferencesProvider>
-    </AuthProvider>
+    <GlobalErrorBoundary>
+      <AuthProvider>
+        <PreferencesProvider>
+          <App />
+        </PreferencesProvider>
+      </AuthProvider>
+    </GlobalErrorBoundary>
   </StrictMode>,
 )

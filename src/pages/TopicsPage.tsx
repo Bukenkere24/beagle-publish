@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Plus, FileText, LayoutDashboard, CheckCircle, Clock as ClockIcon } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { getTopics } from '../lib/db/topics'
 import { useAuth } from '../hooks/useAuth'
 import TopicCard from '../components/TopicCard'
 import AddTopicModal from '../components/AddTopicModal'
@@ -40,22 +40,9 @@ export default function TopicsPage() {
     setLoading(true)
     setError(null)
     try {
-      let query = supabase
-        .from('blog_topic_queue')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (isAdmin) {
-        // Admins see everything including n8n pipeline (where user_id is null)
-      } else {
-        // Regular users see only their own topics
-        query = query.eq('user_id', user.id)
-      }
-
-      const { data, error: qError } = await query
-      if (qError) throw qError
+      const data = await getTopics(user.id, isAdmin)
       
-      let filteredData = (data as TopicRow[]) ?? []
+      let filteredData = data
       if (activeFilter !== 'all') {
         filteredData = filteredData.filter(t => t.status === activeFilter)
       }

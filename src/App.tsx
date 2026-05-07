@@ -12,9 +12,12 @@ import AuthCallback from './pages/AuthCallback'
 
 import LandingPage from './pages/LandingPage'
 
+import { Toaster } from 'sonner'
+
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="bottom-right" theme="dark" richColors />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />

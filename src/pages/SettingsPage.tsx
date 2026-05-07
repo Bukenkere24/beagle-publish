@@ -4,8 +4,11 @@ import { useAuth } from '../hooks/useAuth'
 import { usePreferences } from '../contexts/PreferencesContext'
 import { LogOut, Save, Shield, User, Sliders, Moon, Sun, Monitor, Loader2 } from 'lucide-react'
 
+import { updateProfile } from '../lib/db/profiles'
+import { toast } from 'sonner'
+
 export default function SettingsPage() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut, refreshProfile } = useAuth()
   const { preferences, updatePreferences } = usePreferences()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -30,21 +33,31 @@ export default function SettingsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!user?.id) return
+    
     setLoading(true)
     setSuccess(false)
 
     try {
-      await updatePreferences({
-        defaultTone: formData.defaultTone as any,
-        publicationName: formData.publicationName,
-        topicsOfInterest: formData.topicsOfInterest.split(',').map(s => s.trim()).filter(Boolean),
-        theme: formData.theme as any
-      })
+      await Promise.all([
+        updatePreferences({
+          defaultTone: formData.defaultTone as any,
+          publicationName: formData.publicationName,
+          topicsOfInterest: formData.topicsOfInterest.split(',').map(s => s.trim()).filter(Boolean),
+          theme: formData.theme as any
+        }),
+        updateProfile(user.id, {
+          full_name: formData.full_name
+        })
+      ])
+      
+      await refreshProfile()
       setSuccess(true)
+      toast.success('Settings updated successfully')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       console.error('Failed to save settings:', err)
-      alert('Failed to save settings')
+      toast.error('Failed to save settings')
     } finally {
       setLoading(false)
     }
