@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { LayoutList, FileEdit, Settings, LogOut, Shield, Moon, Sun, Monitor, Menu, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { usePreferences } from '../contexts/PreferencesContext'
@@ -8,9 +8,7 @@ export default function Layout() {
   const { user, signOut, isAdmin } = useAuth()
   const { preferences, toggleTheme } = usePreferences()
   const navigate = useNavigate()
-  const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const draftsActive = location.pathname.startsWith('/drafts')
 
   async function handleSignOut() {
     await signOut()
@@ -26,11 +24,14 @@ export default function Layout() {
         : 'text-beagle-text-muted hover:bg-beagle-surface hover:text-beagle-text-heading'
     }`
 
-  const draftsClass = draftsActive
-    ? 'flex items-center gap-3 px-4 py-3 rounded-beagle bg-beagle-primary/10 text-beagle-primary font-medium shadow-lg shadow-beagle-primary/5'
-    : 'flex items-center gap-3 px-4 py-3 rounded-beagle text-beagle-text-muted hover:bg-beagle-surface hover:text-beagle-text-heading transition-all font-medium'
-
   const closeSidebar = () => setSidebarOpen(false)
+
+  const draftsLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 px-4 py-3 rounded-beagle transition-all font-medium ${
+      isActive
+        ? 'bg-beagle-primary/10 text-beagle-primary shadow-lg shadow-beagle-primary/5'
+        : 'text-beagle-text-muted hover:bg-beagle-surface hover:text-beagle-text-heading'
+    }`
 
   return (
     <div className="flex min-h-screen bg-beagle-bg">
@@ -76,10 +77,15 @@ export default function Layout() {
             <LayoutList size={20} strokeWidth={1.5} />
             Topics
           </NavLink>
-          <Link to="/topics" className={draftsClass} onClick={closeSidebar}>
+          <NavLink
+            to="/drafts"
+            end={false}
+            className={draftsLinkClass}
+            onClick={closeSidebar}
+          >
             <FileEdit size={20} strokeWidth={1.5} />
             Drafts
-          </Link>
+          </NavLink>
           <NavLink to="/settings" className={linkClass} onClick={closeSidebar}>
             <Settings size={20} strokeWidth={1.5} />
             Settings

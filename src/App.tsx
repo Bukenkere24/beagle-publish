@@ -32,7 +32,7 @@ function App() {
         >
           <Route path="topics" element={<TopicsPage />} />
           <Route path="drafts/:id" element={<DraftEditorPage />} />
-          <Route path="drafts" element={<Navigate to="/topics" replace />} />
+          <Route path="drafts" element={<TopicsPage mode="drafts" />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route
             path="admin"

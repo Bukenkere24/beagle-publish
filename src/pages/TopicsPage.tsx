@@ -8,7 +8,7 @@ import TopicCard from '../components/TopicCard'
 import AddTopicModal from '../components/AddTopicModal'
 import type { TopicRow, TopicStatus } from '../types/topic'
 
-const FILTERS: { value: 'all' | TopicStatus; label: string }[] = [
+const PIPELINE_FILTERS: { value: 'all' | TopicStatus; label: string }[] = [
   { value: 'all', label: 'All Content' },
   { value: 'queued', label: 'Queued' },
   { value: 'review', label: 'In Review' },
@@ -16,7 +16,22 @@ const FILTERS: { value: 'all' | TopicStatus; label: string }[] = [
   { value: 'rejected', label: 'Rejected' },
 ]
 
-export default function TopicsPage() {
+const DRAFT_FILTERS: { value: 'all' | TopicStatus; label: string }[] = [
+  { value: 'all', label: 'All Drafts' },
+  { value: 'review', label: 'In Review' },
+  { value: 'drafting', label: 'Drafting' },
+  { value: 'queued', label: 'Queued' },
+]
+
+const DRAFT_PIPELINE_STATUSES: TopicStatus[] = ['queued', 'drafting', 'review']
+
+type TopicsPageProps = {
+  mode?: 'pipeline' | 'drafts'
+}
+
+export default function TopicsPage({ mode = 'pipeline' }: TopicsPageProps) {
+  const isDraftsView = mode === 'drafts'
+  const filters = isDraftsView ? DRAFT_FILTERS : PIPELINE_FILTERS
   const navigate = useNavigate()
   const { user, profile } = useAuth()
   const [topics, setTopics] = useState<TopicRow[]>([])
@@ -43,6 +58,11 @@ export default function TopicsPage() {
       const data = await getTopics(user.id, isAdmin)
       
       let filteredData = data
+      if (isDraftsView) {
+        filteredData = filteredData.filter((t: TopicRow) =>
+          DRAFT_PIPELINE_STATUSES.includes(t.status),
+        )
+      }
       if (activeFilter !== 'all') {
         filteredData = filteredData.filter((t: TopicRow) => t.status === activeFilter)
       }
@@ -69,23 +89,28 @@ export default function TopicsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
         <div>
           <h1 className="text-beagle-text-heading font-heading font-bold text-4xl mb-2 tracking-tight">
-            Content Pipeline
+            {isDraftsView ? 'Drafts' : 'Content Pipeline'}
           </h1>
           <p className="text-beagle-text-muted text-sm font-medium">
-            Manage your blog topics and AI-powered drafts.
+            {isDraftsView
+              ? 'Open a draft to review and edit blog or LinkedIn content.'
+              : 'Manage your blog topics and AI-powered drafts.'}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setAddModalOpen(true)}
-          className="inline-flex items-center gap-2.5 bg-beagle-primary text-white rounded-full px-8 py-3.5 font-semibold hover:bg-beagle-primary-hover transition-all duration-300 shadow-lg shadow-beagle-primary/20"
-        >
-          <Plus size={20} strokeWidth={2.5} />
-          <span>New Topic</span>
-        </button>
+        {!isDraftsView && (
+          <button
+            type="button"
+            onClick={() => setAddModalOpen(true)}
+            className="inline-flex items-center gap-2.5 bg-beagle-primary text-white rounded-full px-8 py-3.5 font-semibold hover:bg-beagle-primary-hover transition-all duration-300 shadow-lg shadow-beagle-primary/20"
+          >
+            <Plus size={20} strokeWidth={2.5} />
+            <span>New Topic</span>
+          </button>
+        )}
       </div>
 
       {/* Stats Bar */}
+      {!isDraftsView && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {[
           { label: 'Total Topics', value: stats.total, icon: LayoutDashboard, color: 'text-beagle-primary' },
@@ -103,9 +128,10 @@ export default function TopicsPage() {
           </div>
         ))}
       </div>
+      )}
 
       <div className="flex flex-wrap gap-2 mb-8 border-b border-beagle-border pb-4">
-        {FILTERS.map(({ value, label }) => (
+        {filters.map(({ value, label }) => (
           <button
             key={value}
             type="button"
