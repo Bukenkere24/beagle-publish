@@ -14,7 +14,7 @@ describe('LandingPage', () => {
     expect(
       screen.getByRole('heading', { name: /Content Pipeline/i }),
     ).toBeInTheDocument()
-    expect(screen.getByText(/Topic queue/i)).toBeInTheDocument()
+    expect(screen.getByText(/Topic Scouting/i)).toBeInTheDocument()
     expect(screen.queryByText(/Hacker News/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/Reddit/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/auto-ingest/i)).not.toBeInTheDocument()
