@@ -27,7 +27,7 @@
 ## Manual test checklist
 
 ### Auth & navigation
-- [ ] Unauthenticated user is redirected to `/login` (or bypassed if `VITE_DEV_SKIP_AUTH=true`)
+- [ ] Unauthenticated user is redirected to `/login`
 - [ ] Sidebar shows: Topics, Drafts, Settings
 - [ ] Navigating to Topics loads the topics queue
 
