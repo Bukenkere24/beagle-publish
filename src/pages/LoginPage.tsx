@@ -10,9 +10,11 @@ const skipAuth =
 export default function LoginPage() {
   const { user, signIn, signUp } = useAuth()
   const location = useLocation()
-  const from =
-    (location.state as { from?: { pathname: string } })?.from?.pathname ??
-    '/topics'
+  const fromLocation = (location.state as { from?: { pathname: string; search?: string } })
+    ?.from
+  const from = fromLocation
+    ? `${fromLocation.pathname}${fromLocation.search ?? ''}`
+    : '/topics'
 
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [email, setEmail] = useState('')

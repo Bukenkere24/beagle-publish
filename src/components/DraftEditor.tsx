@@ -1,28 +1,34 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FileText, Linkedin, Sparkles, Loader2 } from 'lucide-react'
+import { AlertCircle, FileText, Linkedin, Sparkles, Loader2 } from 'lucide-react'
 import type { TopicRow } from '../types/topic'
 import { generateLinkedInDraft } from '../lib/linkedin-generator'
 
 interface DraftEditorProps {
   topic: TopicRow
   onUpdate: (updates: Partial<TopicRow>) => void
+  initialTab?: 'blog' | 'linkedin'
 }
 
 type Tab = 'blog' | 'linkedin'
 
-export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('blog')
+export default function DraftEditor({ topic, onUpdate, initialTab = 'blog' }: DraftEditorProps) {
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab)
   const [blogContent, setBlogContent] = useState(topic.draft_content || '')
   const [linkedinDraft, setLinkedinDraft] = useState(topic.linkedin_draft || '')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [generateError, setGenerateError] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setBlogContent(topic.draft_content || '')
     setLinkedinDraft(topic.linkedin_draft || '')
   }, [topic.id])
+
+  useEffect(() => {
+    setActiveTab(initialTab)
+  }, [initialTab, topic.id])
 
   const handleBlogChange = (content: string) => {
     setBlogContent(content)
@@ -44,13 +50,14 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
   const handleGenerateLinkedIn = async () => {
     if (!blogContent) return
     setIsGenerating(true)
+    setGenerateError(false)
     try {
       const generated = await generateLinkedInDraft(blogContent, topic.draft_title || topic.topic)
       setLinkedinDraft(generated)
       onUpdate({ linkedin_draft: generated })
       setActiveTab('linkedin')
-    } catch (error) {
-      alert('Generation failed. Please try again.')
+    } catch {
+      setGenerateError(true)
     } finally {
       setIsGenerating(false)
     }
@@ -59,7 +66,7 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
   return (
     <div className="bg-beagle-surface border border-beagle-border rounded-beagle overflow-hidden">
       {/* Tabs */}
-      <div className="flex items-center px-4 border-b border-beagle-border bg-white/[0.02]">
+      <div className="flex flex-wrap items-center border-b border-beagle-border bg-white/[0.02] px-2 sm:px-4">
         <button
           onClick={() => setActiveTab('blog')}
           className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all relative ${
@@ -99,8 +106,27 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
         </div>
       </div>
 
+      {generateError && (
+        <div
+          role="alert"
+          className="mx-4 mt-4 flex items-center gap-3 rounded-beagle border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+        >
+          <AlertCircle size={18} className="shrink-0" strokeWidth={1.5} />
+          <span className="flex-1">
+            LinkedIn generation failed. Check your connection and try again.
+          </span>
+          <button
+            type="button"
+            onClick={() => setGenerateError(false)}
+            className="shrink-0 text-xs uppercase tracking-wider text-red-200 hover:text-white"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Editor Content */}
-      <div className="p-4 bg-black/20">
+      <div className="bg-black/20 p-3 sm:p-4">
         <AnimatePresence mode="wait">
           {activeTab === 'blog' ? (
             <motion.div
@@ -108,7 +134,7 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[600px]"
+              className="grid h-[min(480px,65vh)] grid-cols-1 gap-4 lg:h-[600px] lg:grid-cols-2"
             >
               <div className="flex flex-col h-full bg-beagle-bg/50 border border-white/[0.05] rounded-beagle overflow-hidden">
                 <div className="px-4 py-2 bg-white/[0.02] border-b border-white/[0.05] flex items-center justify-between">
@@ -138,7 +164,7 @@ export default function DraftEditor({ topic, onUpdate }: DraftEditorProps) {
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[600px]"
+              className="grid h-[min(480px,65vh)] grid-cols-1 gap-4 lg:h-[600px] lg:grid-cols-2"
             >
               <div className="flex flex-col h-full bg-beagle-bg/50 border border-white/[0.05] rounded-beagle overflow-hidden">
                 <div className="px-4 py-2 bg-white/[0.02] border-b border-white/[0.05] flex items-center justify-between">

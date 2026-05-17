@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
+import { PageLoader } from '../components/ui/PageState'
 
 export default function SettingsPage() {
   const { user, profile, signOut, loading } = useAuth()
@@ -19,7 +20,7 @@ export default function SettingsPage() {
 
       <div className="rounded-beagle border border-beagle-border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6">
         {loading ? (
-          <p className="text-beagle-text-muted">Loading profile…</p>
+          <PageLoader label="Loading profile…" />
         ) : (
           <dl className="space-y-4">
             <div>
