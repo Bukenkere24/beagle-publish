@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { PageLoader } from './ui/PageState'
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation()
@@ -15,7 +16,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-beagle-bg">
-        <p className="text-beagle-text-muted">Loading...</p>
+        <PageLoader label="Checking your session…" />
       </div>
     )
   }

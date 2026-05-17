@@ -46,8 +46,8 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
       setSource('manual')
       onAdded()
       onClose()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add topic')
+    } catch {
+      setError('Couldn’t add this topic. Please try again.')
     } finally {
       setSubmitting(false)
     }
