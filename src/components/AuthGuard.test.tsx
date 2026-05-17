@@ -1,26 +1,29 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, cleanup } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+
+const mockUseAuth = vi.fn()
 
 vi.mock('../hooks/useAuth', () => ({
-  useAuth: vi.fn(),
+  useAuth: () => mockUseAuth(),
 }))
 
-import { useAuth } from '../hooks/useAuth'
 import AuthGuard from './AuthGuard'
-
-const mockedUseAuth = vi.mocked(useAuth)
 
 describe('AuthGuard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
+  afterEach(() => {
+    cleanup()
+  })
+
   it('renders children when user is authenticated', () => {
-    mockedUseAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       user: { id: '123', email: 'test@example.com' },
       loading: false,
-    } as ReturnType<typeof useAuth>)
+    })
 
     render(
       <MemoryRouter>
@@ -34,10 +37,10 @@ describe('AuthGuard', () => {
   })
 
   it('redirects to /login when no user', () => {
-    mockedUseAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       user: null,
       loading: false,
-    } as ReturnType<typeof useAuth>)
+    })
 
     render(
       <MemoryRouter initialEntries={['/topics']}>
@@ -51,10 +54,10 @@ describe('AuthGuard', () => {
   })
 
   it('shows loading state while auth is resolving', () => {
-    mockedUseAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       user: null,
       loading: true,
-    } as ReturnType<typeof useAuth>)
+    })
 
     render(
       <MemoryRouter>
