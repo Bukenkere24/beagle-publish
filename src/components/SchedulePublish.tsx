@@ -93,7 +93,7 @@ export default function SchedulePublish({ topic, onSaved }: Props) {
         type="datetime-local"
         value={local}
         onChange={handleChange}
-        className="mt-2 w-full max-w-sm rounded-beagle border border-beagle-border bg-beagle-bg px-3 py-2 text-sm text-beagle-white focus:border-beagle-border-hover focus:outline-none"
+        className="auth-field-input mt-2 w-full max-w-sm rounded-beagle border border-beagle-border bg-beagle-bg px-3 py-2 text-sm text-beagle-text-heading focus:border-beagle-border-hover focus:outline-none"
       />
       {topic.scheduled_publish_at && (
         <p className="mt-2 text-xs text-beagle-text-muted">

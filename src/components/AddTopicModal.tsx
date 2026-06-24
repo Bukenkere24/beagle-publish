@@ -98,7 +98,7 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="What should we write about?"
                   rows={3}
-                  className="w-full bg-beagle-surface border border-beagle-border rounded-beagle p-4 text-beagle-white placeholder-beagle-text-dimmed focus:border-beagle-primary focus:outline-none resize-none"
+                  className="auth-field-input w-full bg-beagle-surface border border-beagle-border rounded-beagle p-4 text-beagle-text-heading placeholder:text-beagle-text-dimmed focus:border-beagle-primary focus:outline-none resize-none"
                   disabled={submitting}
                 />
               </div>
@@ -109,7 +109,7 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
                 <select
                   value={source}
                   onChange={(e) => setSource(e.target.value as 'manual' | 'hn' | 'reddit')}
-                  className="w-full bg-beagle-surface border border-beagle-border rounded-beagle px-4 py-3 text-beagle-white focus:border-beagle-primary focus:outline-none"
+                  className="auth-field-input w-full bg-beagle-surface border border-beagle-border rounded-beagle px-4 py-3 text-beagle-text-heading focus:border-beagle-primary focus:outline-none"
                   disabled={submitting}
                 >
                   {SOURCES.map((s) => (
@@ -128,7 +128,7 @@ export default function AddTopicModal({ isOpen, onClose, onAdded }: AddTopicModa
                   value={keywordsInput}
                   onChange={(e) => setKeywordsInput(e.target.value)}
                   placeholder="ai, product, startup"
-                  className="w-full bg-beagle-surface border border-beagle-border rounded-beagle px-4 py-3 text-beagle-white placeholder-beagle-text-dimmed focus:border-beagle-primary focus:outline-none"
+                  className="auth-field-input w-full bg-beagle-surface border border-beagle-border rounded-beagle px-4 py-3 text-beagle-text-heading placeholder:text-beagle-text-dimmed focus:border-beagle-primary focus:outline-none"
                   disabled={submitting}
                 />
               </div>
