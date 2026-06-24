@@ -18,7 +18,7 @@ const LandingPage = () => {
           </div>
           <Link 
             to="/login"
-            className="text-beagle-white hover:text-beagle-primary transition-colors font-medium flex items-center gap-1"
+            className="landing-ghost-cta text-beagle-text-heading hover:text-beagle-primary transition-colors font-medium flex items-center gap-1"
           >
             Sign In <ArrowRight size={16} />
           </Link>
@@ -55,7 +55,7 @@ const LandingPage = () => {
               </Link>
               <Link
                 to="/login"
-                className="w-full md:w-auto border border-beagle-border hover:border-beagle-border-hover bg-white/[0.02] text-beagle-white rounded-beagle-btn px-10 py-5 uppercase tracking-[0.15em] font-bold transition-all"
+                className="landing-ghost-cta w-full md:w-auto border border-beagle-border hover:border-beagle-border-hover bg-white/[0.02] text-beagle-text-heading rounded-beagle-btn px-10 py-5 uppercase tracking-[0.15em] font-bold transition-all"
               >
                 Sign In
               </Link>

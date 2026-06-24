@@ -7,6 +7,23 @@ const skipAuth =
   import.meta.env.VITE_DEV_SKIP_AUTH === 'true' ||
   import.meta.env.VITE_DEV_SKIP_AUTH === '1'
 
+function friendlyAuthError(message: string): string {
+  const lower = message.toLowerCase()
+  if (lower.includes('invalid login credentials')) {
+    return 'Incorrect email or password. Please try again.'
+  }
+  if (lower.includes('email not confirmed')) {
+    return 'Please confirm your email before signing in.'
+  }
+  if (lower.includes('user already registered')) {
+    return 'An account with this email already exists. Try signing in instead.'
+  }
+  if (lower.includes('password')) {
+    return 'Password must be at least 6 characters.'
+  }
+  return message
+}
+
 export default function LoginPage() {
   const { user, signIn, signUp } = useAuth()
   const location = useLocation()
@@ -38,10 +55,10 @@ export default function LoginPage() {
     try {
       if (mode === 'signin') {
         const { error: err } = await signIn(email, password)
-        if (err) setError(err.message)
+        if (err) setError(friendlyAuthError(err.message))
       } else {
         const { error: err } = await signUp(email, password, fullName)
-        if (err) setError(err.message)
+        if (err) setError(friendlyAuthError(err.message))
         else
           setError(
             'Check your email to confirm your account, then sign in.',
@@ -100,7 +117,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'signup' && (
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-beagle-text-dimmed">
+              <label className="auth-field-label mb-1 block text-xs uppercase tracking-wider text-beagle-text-dimmed">
                 Full name
               </label>
               <input
@@ -108,13 +125,13 @@ export default function LoginPage() {
                 autoComplete="name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-beagle border border-beagle-border bg-beagle-surface px-4 py-3 text-beagle-white placeholder-beagle-text-dimmed focus:border-beagle-border-hover focus:outline-none"
+                className="auth-field-input w-full rounded-beagle border border-beagle-border bg-beagle-surface px-4 py-3 text-beagle-text-heading placeholder:text-beagle-text-dimmed focus:border-beagle-border-hover focus:outline-none"
                 placeholder="Ada Lovelace"
               />
             </div>
           )}
           <div>
-            <label className="mb-1 block text-xs uppercase tracking-wider text-beagle-text-dimmed">
+            <label className="auth-field-label mb-1 block text-xs uppercase tracking-wider text-beagle-text-dimmed">
               Email
             </label>
             <input
@@ -123,12 +140,12 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-beagle border border-beagle-border bg-beagle-surface px-4 py-3 text-beagle-white placeholder-beagle-text-dimmed focus:border-beagle-border-hover focus:outline-none"
+              className="auth-field-input w-full rounded-beagle border border-beagle-border bg-beagle-surface px-4 py-3 text-beagle-text-heading placeholder:text-beagle-text-dimmed focus:border-beagle-border-hover focus:outline-none"
               placeholder="you@company.com"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs uppercase tracking-wider text-beagle-text-dimmed">
+            <label className="auth-field-label mb-1 block text-xs uppercase tracking-wider text-beagle-text-dimmed">
               Password
             </label>
             <input
@@ -139,7 +156,7 @@ export default function LoginPage() {
               }
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-beagle border border-beagle-border bg-beagle-surface px-4 py-3 text-beagle-white placeholder-beagle-text-dimmed focus:border-beagle-border-hover focus:outline-none"
+              className="auth-field-input w-full rounded-beagle border border-beagle-border bg-beagle-surface px-4 py-3 text-beagle-text-heading placeholder:text-beagle-text-dimmed focus:border-beagle-border-hover focus:outline-none"
               placeholder="••••••••"
             />
           </div>
