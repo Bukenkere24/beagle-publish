@@ -8,3 +8,30 @@ html, body {
   font-family: "Space Grotesk", Lato, Poppins, Rubik, system-ui, sans-serif;
   overflow-x: hidden;
 }
+
+/* OS light mode: browsers often force pale form controls while Tailwind keeps light text */
+@media (prefers-color-scheme: light) {
+  .auth-field-input {
+    color: #111827;
+    -webkit-text-fill-color: #111827;
+    background-color: #f3f4f6;
+  }
+
+  .auth-field-input::placeholder {
+    color: #4b5563;
+    opacity: 1;
+  }
+
+  select.auth-field-input option {
+    color: #111827;
+    background-color: #f3f4f6;
+  }
+
+  .auth-field-label {
+    color: #1f2937;
+  }
+
+  .landing-ghost-cta {
+    color: #111827;
+  }
+}
